@@ -18,7 +18,6 @@ class _CommonAppTextFieldState extends State<CommonAppTextField> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
-      print('InvalidUserName: $state');
       return Container(
         margin: EdgeInsets.only(left: Dimen.spacingNormal, right: Dimen.spacingNormal),
         child: TextField(

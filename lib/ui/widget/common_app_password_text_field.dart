@@ -20,7 +20,6 @@ class _CommonAppTextFieldState extends State<CommonAppPasswordTextField> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(builder: (ctx, state) {
-      print('Invalidpassword: $state');
       return Container(
         margin: EdgeInsets.only(left: Dimen.spacingNormal, right: Dimen.spacingNormal),
         child: TextField(
