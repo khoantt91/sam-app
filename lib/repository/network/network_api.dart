@@ -2,6 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:samapp/repository/network/api/authenticate_api.dart';
 import 'package:samapp/repository/network/api/deal_api.dart';
+import 'package:samapp/repository/network/constant/network_config.dart';
+import 'package:samapp/repository/network/model/network_error.dart';
+import 'package:samapp/repository/network/model/network_result.dart';
+
+import '../../model/user.dart';
 
 class NetworkAPI implements NetworkImp {
   Dio _dio;
@@ -11,6 +16,7 @@ class NetworkAPI implements NetworkImp {
   NetworkAPI() {
     /* Config Dio */
     final options = BaseOptions(
+      baseUrl: NetworkConfig.baseURL,
       connectTimeout: 60000,
       receiveTimeout: 60000,
     );
@@ -35,7 +41,8 @@ class NetworkAPI implements NetworkImp {
   }
 
   @override
-  Future<String> login(String userName, String password, String fbToken, String os) => _authenticateAPI.login(userName, password, fbToken, os);
+  Future<NetworkResult<User, NetworkError>> login(String userName, String password, String fbToken, String os) =>
+      _authenticateAPI.login(userName, password, fbToken, os);
 
   @override
   Future<String> getDeals() => _dealApi.getDeals();
@@ -43,7 +50,7 @@ class NetworkAPI implements NetworkImp {
 
 abstract class NetworkImp {
   //region Authenticate
-  Future<String> login(String userName, String password, String fbToken, String os);
+  Future<NetworkResult<User, NetworkError>> login(String userName, String password, String fbToken, String os);
 
   //endregion
 

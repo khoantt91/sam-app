@@ -9,10 +9,10 @@ import 'package:samapp/utils/constant/app_theme.dart';
 import './generated/i18n.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(SamApp());
 }
 
-class MyApp extends StatelessWidget {
+class SamApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     /* Config Provider */

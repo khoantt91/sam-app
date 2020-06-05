@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:samapp/utils/constant/app_color.dart';
 
 import 'dimen.dart';
 
 ThemeData get AppTheme => ThemeData(
+    //TODO should refactor to AppColor
     fontFamily: 'Helveticaneue',
     primarySwatch: Colors.orange,
     accentColor: Colors.white,
-    primaryColor: Color(0xFFF17423),
+    primaryColor: AppColor.primaryColor,
     secondaryHeaderColor: Color(0xFF2774BE),
     cursorColor: Color(0xFFF17423),
     focusColor: Color(0xFFF17423),

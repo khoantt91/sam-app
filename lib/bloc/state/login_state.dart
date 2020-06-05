@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:samapp/model/user.dart';
 
+import '../../model/user.dart';
+
 abstract class LoginState extends Equatable {
   const LoginState();
 
@@ -37,7 +39,7 @@ class LoginFailure extends LoginState {
 }
 
 class LoginSuccess extends LoginState {
-  final String user;
+  final User user;
 
   const LoginSuccess(this.user);
 }

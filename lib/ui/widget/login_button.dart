@@ -19,20 +19,25 @@ class LoginButton extends StatefulWidget {
 }
 
 class _LoginButtonState extends State<LoginButton> {
-
   @override
   Widget build(BuildContext context) {
-
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
-        //TODO login error
         if (state is LoginFailure) {
-          print('User login failed - reason: ${state.error}');
+          Scaffold.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '${state.error}',
+                style: TextStyle(color: Colors.red),
+              ),
+              backgroundColor: Colors.white,
+              duration: Duration(seconds: 1),
+            ),
+          );
           return;
         }
 
         if (state is LoginSuccess) {
-          print('User login success - user info: ${state.user}');
           Fluttertoast.showToast(
             msg: S.of(context).common_sign_in_success,
             toastLength: Toast.LENGTH_SHORT,
@@ -87,5 +92,4 @@ class _LoginButtonState extends State<LoginButton> {
   void _login() {
     BlocProvider.of<LoginBloc>(context).add(LoginButtonPress(widget._userName, widget._password));
   }
-
 }

@@ -5,6 +5,8 @@ import 'package:samapp/bloc/event/login_event.dart';
 import 'package:samapp/bloc/state/login_state.dart';
 import 'package:samapp/repository/repository.dart';
 
+import 'state/login_state.dart';
+
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final RepositoryImp _repository;
 
@@ -29,8 +31,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       if (event.userName.isEmpty || event.password.isEmpty) return;
 
       yield LoginLoading();
-      final userLogin = await _repository.login(event.userName, event.password, 'HelloFbToken', Platform.operatingSystem);
-      yield LoginSuccess(userLogin);
+      final result = await _repository.login(event.userName, event.password, 'HelloFbToken', Platform.operatingSystem);
+      if (result.error != null) {
+        yield LoginFailure(result.error.message);
+      } else {
+        yield LoginSuccess(result.success);
+      }
     }
   }
 }
