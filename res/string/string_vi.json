@@ -1,0 +1,18 @@
+{
+  "common_app_version": "Phiên bản ${version}",
+  "common_welcome_to": "Chào mừng đến với",
+  "common_full_app_name": "Ứng Dụng Thống Kê & Quản Lý",
+  "common_username": "Tên đăng nhập",
+  "common_password": "Mật khẩu",
+  "common_sign_in": "Đăng nhập",
+  "common_count_deal": "${number} deals",
+  "common_filter_data": "Lọc dữ liệu",
+  "common_sign_in_success": "Đăng nhập thành công",
+  "bottom_main_menu_home": "Trang Chủ",
+  "bottom_main_menu_listing": "Listing",
+  "bottom_main_menu_deal": "Deal",
+  "bottom_main_menu_chat": "Chat",
+  "bottom_main_menu_notification": "Thông Báo",
+  "listing_screen_title": "Danh Sách Listing",
+  "deal_screen_title": "Danh Sách Deal"
+}
