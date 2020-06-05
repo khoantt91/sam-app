@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:samapp/generated/i18n.dart';
 import 'package:samapp/model/deal.dart';
-import 'package:samapp/repository/network/network.dart';
 import 'package:samapp/ui/widget/common_app_bar.dart';
 import 'package:samapp/ui/widget/deal_item.dart';
-import 'package:samapp/utils/dimen.dart';
+import 'package:samapp/utils/constant/dimen.dart';
 
 class ListingTabScreen extends StatefulWidget {
   const ListingTabScreen({Key key}) : super(key: key);
@@ -22,22 +21,22 @@ class _ListingTabScreenState extends State<ListingTabScreen> {
   Future<String> getCountryData() async {
     print('REFRESH DATA');
     _page = 1;
-    final result = await NetworkAPI.getDeals({'page': _page, 'item': 20});
-    setState(() {
-      _dealList = result;
-    });
+//    final result = await NetworkAPI.getDeals({'page': _page, 'item': 20});
+//    setState(() {
+//      _dealList = result;
+//    });
   }
 
   void _loadMore() {
     if (_isLoading) return;
     _isLoading = true;
     _page++;
-    NetworkAPI.getDeals({'page': _page, 'item': 20}).then((result) {
-      setState(() {
-        _dealList.addAll(result);
-        _isLoading = false;
-      });
-    });
+//    NetworkAPI.getDeals({'page': _page, 'item': 20}).then((result) {
+//      setState(() {
+//        _dealList.addAll(result);
+//        _isLoading = false;
+//      });
+//    });
   }
 
   List<Deal> _dealList = [];

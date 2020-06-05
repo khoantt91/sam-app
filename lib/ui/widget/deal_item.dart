@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:samapp/model/deal.dart';
-import 'package:samapp/utils/dimen.dart';
+import 'package:samapp/utils/constant/dimen.dart';
 
 class DealItem extends StatefulWidget {
   final Deal _deal;

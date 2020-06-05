@@ -37,7 +37,7 @@ class LoginFailure extends LoginState {
 }
 
 class LoginSuccess extends LoginState {
-  final User user;
+  final String user;
 
   const LoginSuccess(this.user);
 }

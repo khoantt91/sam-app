@@ -6,7 +6,7 @@ import 'package:samapp/bloc/login_bloc.dart';
 import 'package:samapp/bloc/state/login_state.dart';
 import 'package:samapp/generated/i18n.dart';
 import 'package:samapp/ui/main/main_tab_screen.dart';
-import 'package:samapp/utils/dimen.dart';
+import 'package:samapp/utils/constant/dimen.dart';
 
 class LoginButton extends StatefulWidget {
   final String _userName;

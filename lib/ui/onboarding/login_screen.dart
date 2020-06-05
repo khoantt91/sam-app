@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:samapp/bloc/login_bloc.dart';
 import 'package:samapp/generated/i18n.dart';
+import 'package:samapp/repository/repository.dart';
 import 'package:samapp/ui/widget/common_app_password_text_field.dart';
 import 'package:samapp/ui/widget/common_app_text_field.dart';
 import 'package:samapp/ui/widget/footer_app_version.dart';
 import 'package:samapp/ui/widget/login_button.dart';
-import 'package:samapp/utils/dimen.dart';
+import 'package:samapp/utils/constant/dimen.dart';
 
 class LoginScreenWidget extends StatefulWidget {
   static const routerName = '/login-screen/';
@@ -33,7 +34,7 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
       return MultiBlocProvider(
         providers: [
           BlocProvider<LoginBloc>(
-            create: (context) => LoginBloc(),
+            create: (context) => LoginBloc(RepositoryProvider.of<RepositoryImp>(context)),
           ),
         ],
         child: Container(

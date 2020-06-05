@@ -1,9 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:samapp/bloc/event/login_event.dart';
 import 'package:samapp/bloc/state/login_state.dart';
-import 'package:samapp/repository/network/network.dart';
+import 'package:samapp/repository/repository.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
+  final RepositoryImp _repository;
+
+  LoginBloc(this._repository);
+
   @override
   LoginState get initialState => LoginInitial();
 
@@ -22,16 +28,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
       if (event.userName.isEmpty || event.password.isEmpty) return;
 
-      print('aksdjhfkajhdfkahsjfd');
       yield LoginLoading();
-      final params = {
-        "userName": event.userName,
-        "password": event.password,
-        "osName": "ANDROID",
-        "deviceToken": "HelloToken",
-      };
-
-      final userLogin = await NetworkAPI.login(params);
+      final userLogin = await _repository.login(event.userName, event.password, 'HelloFbToken', Platform.operatingSystem);
       yield LoginSuccess(userLogin);
     }
   }

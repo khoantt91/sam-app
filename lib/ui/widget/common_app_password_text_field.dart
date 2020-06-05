@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:samapp/bloc/login_bloc.dart';
 import 'package:samapp/bloc/state/login_state.dart';
-import 'package:samapp/utils/dimen.dart';
+import 'package:samapp/utils/constant/dimen.dart';
 
 class CommonAppPasswordTextField extends StatefulWidget {
   TextEditingController _controller;

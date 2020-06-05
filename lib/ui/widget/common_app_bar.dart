@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:samapp/utils/dimen.dart';
+import 'package:samapp/utils/constant/dimen.dart';
 
 class CommonAppBar extends StatefulWidget implements PreferredSizeWidget {
   final _height = AppBar().preferredSize.height;
