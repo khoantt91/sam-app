@@ -83,6 +83,11 @@ NetworkResult<Map<String, dynamic>, NetworkError> handleRawResponse(NetworkRespo
   return NetworkResult(networkResponse.data, null);
 }
 
+/// Handle exception
+NetworkResult<T, NetworkError> handleException<T>(DioError ex) {
+  return NetworkResult(null, NetworkError(code: ex.response?.statusCode?.toString() ?? '500', message: ex.message.toString()));
+}
+
 //region Private Support Methods
 bool _parseDataModelResponse(NetworkResponse networkResponse, Response<dynamic> result) {
   if (result.data['data'] is Map<String, dynamic>) {

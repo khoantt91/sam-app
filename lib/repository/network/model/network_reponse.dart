@@ -12,7 +12,7 @@ class NetworkResponse {
   Map<String, dynamic> data;
 
   @JsonKey(ignore: true)
-  List<Map<String, dynamic>> dataArr;
+  List<dynamic> dataArr;
 
   NetworkResponse(this.result, this.code, this.message);
 

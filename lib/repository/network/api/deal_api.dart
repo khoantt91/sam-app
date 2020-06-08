@@ -12,8 +12,16 @@ class DealApi {
 
   Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals() async {
     try {
+      final params = {
+        "fromDate": 1588923522589,
+        "listingTypes": [1, 2],
+        "scorecardTypes": ["H2", "H1", "M2", "M1", "L1", "L0"],
+        "toDate": 1591601922589,
+        "statusDeals": [24, 25, 26, 29, 27, 28]
+      };
       var result = await _dio.post(
-        'http://45.117.162.60:8080/sam-dashboard/api/deals/1/20?access_token=6fe8ad3be0de51f989b5b8830a77dc24d98da24b926c2ced3fb3fcc4469de306',
+        'deals/1/20?access_token=6fe8ad3be0de51f989b5b8830a77dc24d98da24b926c2ced3fb3fcc4469de306',
+        data: params,
       );
       return handleListResponse<Deal>(result);
     } catch (ex) {

@@ -18,7 +18,7 @@ class LoginScreenWidget extends StatefulWidget {
 }
 
 class _LoginScreenWidgetState extends State<LoginScreenWidget> {
-  final TextEditingController userNameController = TextEditingController(text: 'nhungtran'); //Just temp for testing
+  final TextEditingController userNameController = TextEditingController(text: 'nguyennhatquang'); //Just temp for testing
   final TextEditingController passwordController = TextEditingController(text: '123'); //Just temp for testing
 
   @override
