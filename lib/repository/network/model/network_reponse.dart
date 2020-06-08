@@ -11,6 +11,9 @@ class NetworkResponse {
   @JsonKey(ignore: true)
   Map<String, dynamic> data;
 
+  @JsonKey(ignore: true)
+  List<Map<String, dynamic>> dataArr;
+
   NetworkResponse(this.result, this.code, this.message);
 
   factory NetworkResponse.fromJson(Map<String, dynamic> json) => _$NetworkResponseFromJson(json);

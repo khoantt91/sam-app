@@ -1,8 +1,10 @@
+import 'package:samapp/model/deal.dart';
 import 'package:samapp/repository/network/network_api.dart';
 
 import '../model/user.dart';
 import 'network/model/network_error.dart';
 import 'network/model/network_result.dart';
+import 'network/model/network_result_paging.dart';
 
 class Repository implements RepositoryImp {
   NetworkImp _networkApi;
@@ -16,7 +18,7 @@ class Repository implements RepositoryImp {
       _networkApi.login(userName, password, fbToken, os);
 
   @override
-  Future<String> getDeals() => _networkApi.getDeals();
+  Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals() => _networkApi.getDeals();
 }
 
 abstract class RepositoryImp {
@@ -26,7 +28,7 @@ abstract class RepositoryImp {
   //endregion
 
   //region Deal
-  Future<String> getDeals();
+  Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals();
 //endregion
 
 }

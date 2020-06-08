@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:samapp/model/deal.dart';
 import 'package:samapp/repository/network/api/authenticate_api.dart';
 import 'package:samapp/repository/network/api/deal_api.dart';
 import 'package:samapp/repository/network/constant/network_config.dart';
@@ -7,6 +8,7 @@ import 'package:samapp/repository/network/model/network_error.dart';
 import 'package:samapp/repository/network/model/network_result.dart';
 
 import '../../model/user.dart';
+import 'model/network_result_paging.dart';
 
 class NetworkAPI implements NetworkImp {
   Dio _dio;
@@ -45,7 +47,7 @@ class NetworkAPI implements NetworkImp {
       _authenticateAPI.login(userName, password, fbToken, os);
 
   @override
-  Future<String> getDeals() => _dealApi.getDeals();
+  Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals() => _dealApi.getDeals();
 }
 
 abstract class NetworkImp {
@@ -55,6 +57,6 @@ abstract class NetworkImp {
   //endregion
 
   //region Deal
-  Future<String> getDeals();
+  Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals();
 //endregion
 }

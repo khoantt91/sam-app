@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:samapp/generated/i18n.dart';
 import 'package:samapp/model/deal.dart';
+import 'package:samapp/repository/repository.dart';
 import 'package:samapp/ui/widget/common_app_bar.dart';
 import 'package:samapp/ui/widget/deal_item.dart';
 import 'package:samapp/utils/constant/dimen.dart';
@@ -21,22 +23,24 @@ class _DealTabScreenState extends State<DealTabScreen> {
   Future<String> getCountryData() async {
     print('REFRESH DATA');
     _page = 1;
-//    final result = await NetworkAPI.getDeals({'page': _page, 'item': 20});
-//    setState(() {
-//      _dealList = result;
-//    });
+    final repository = RepositoryProvider.of<RepositoryImp>(context);
+    final result = await repository.getDeals();
+    setState(() {
+      _dealList = result.success.list;
+    });
   }
 
   void _loadMore() {
     if (_isLoading) return;
     _isLoading = true;
     _page++;
-//    NetworkAPI.getDeals({'page': _page, 'item': 20}).then((result) {
-//      setState(() {
-//        _dealList.addAll(result);
-//        _isLoading = false;
-//      });
-//    });
+    final repository = RepositoryProvider.of<RepositoryImp>(context);
+    repository.getDeals().then((result) {
+      setState(() {
+        _dealList.addAll(result.success.list);
+        _isLoading = false;
+      });
+    });
   }
 
   List<Deal> _dealList = [];
