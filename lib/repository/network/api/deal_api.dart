@@ -10,7 +10,7 @@ class DealApi {
 
   DealApi(this._dio);
 
-  Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals() async {
+  Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals(String token) async {
     try {
       final params = {
         "fromDate": 1588923522589,
@@ -20,7 +20,7 @@ class DealApi {
         "statusDeals": [24, 25, 26, 29, 27, 28]
       };
       var result = await _dio.post(
-        'deals/1/20?access_token=6fe8ad3be0de51f989b5b8830a77dc24d98da24b926c2ced3fb3fcc4469de306',
+        'deals/1/20?access_token=$token',
         data: params,
       );
       return handleListResponse<Deal>(result);
