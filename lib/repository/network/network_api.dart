@@ -47,6 +47,10 @@ class NetworkAPI implements NetworkImp {
       _authenticateAPI.login(userName, password, fbToken, os);
 
   @override
+  Future<NetworkResult<Map<String, dynamic>, NetworkError>> logout(String token, String fbToken, String os) =>
+      _authenticateAPI.logout(os, fbToken, token);
+
+  @override
   Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals(String token) => _dealApi.getDeals(token);
 }
 
@@ -54,9 +58,11 @@ abstract class NetworkImp {
   //region Authenticate
   Future<NetworkResult<User, NetworkError>> login(String userName, String password, String fbToken, String os);
 
+  Future<NetworkResult<Map<String, dynamic>, NetworkError>> logout(String token, String fbToken, String os);
+
   //endregion
 
   //region Deal
   Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals(String token);
-  //endregion
+//endregion
 }

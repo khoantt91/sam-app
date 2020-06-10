@@ -5,6 +5,7 @@ import 'package:samapp/repository/network/model/network_error.dart';
 import 'package:samapp/repository/network/model/network_reponse.dart';
 import 'package:samapp/repository/network/model/network_result.dart';
 import 'package:samapp/repository/network/model/network_result_paging.dart';
+import 'package:samapp/utils/log/log.dart';
 
 Type typeOf<T>() => T;
 
@@ -73,14 +74,26 @@ NetworkResult<NetworkResultPaging<S>, NetworkError> handleListResponse<S>(Respon
 }
 
 /// Handle raw response
-NetworkResult<Map<String, dynamic>, NetworkError> handleRawResponse(NetworkResponse networkResponse) {
+NetworkResult<Map<String, dynamic>, NetworkError> handleRawResponse(Response<dynamic> result) {
+  final networkResponse = NetworkResponse.fromJson(result.data as Map<String, dynamic>);
+
+  /* Get data model from response */
+  if (!_parseDataModelResponse(networkResponse, result)) {
+    return NetworkResult(
+        null,
+        NetworkError(
+          code: NetworkError.ERROR_CODE_UNKNOWN,
+          message: 'Unknown type of data = ${result.data['data'].toString()}',
+        ));
+  }
+
   /* Handle Error */
   if (networkResponse.code != '200') {
     return NetworkResult(null, NetworkError(code: networkResponse.code, message: networkResponse.message));
   }
 
   /* Handle Success */
-  return NetworkResult(networkResponse.data, null);
+  return NetworkResult(networkResponse.toJson(), null);
 }
 
 /// Handle exception

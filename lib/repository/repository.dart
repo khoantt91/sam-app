@@ -3,7 +3,6 @@ import 'package:samapp/repository/local/secure_storage/secure_storage_constant.d
 import 'package:samapp/repository/local/secure_storage/secure_storage_manager.dart';
 import 'package:samapp/repository/network/network_api.dart';
 import 'package:samapp/utils/log/log.dart';
-
 import '../model/user.dart';
 import 'network/model/network_error.dart';
 import 'network/model/network_result.dart';
@@ -13,15 +12,25 @@ class Repository implements RepositoryImp {
   NetworkImp _networkApi;
   SecureStorageManagerImp _secureStorageManager;
   String _token;
+  String _fbToken;
 
   Future<String> _getToken() async {
-    return _token != null ? Future.value(_token) : _secureStorageManager.read(SecureStorageConstant.ACCESS_TOKEN);
+    _token = _token == null ? await _secureStorageManager.read(SecureStorageConstant.ACCESS_TOKEN) : _token;
+    return Future.value(_token);
+  }
+
+  Future<String> _getFirebaseToken() async {
+    _fbToken = _fbToken == null ? await _secureStorageManager.read(SecureStorageConstant.FIREBASE_TOKEN) : _fbToken;
+    return Future.value(_fbToken);
   }
 
   Repository() {
     _networkApi = NetworkAPI();
     _secureStorageManager = SecureStorageManager();
   }
+
+  @override
+  Future<String> checkToken() => _getToken();
 
   @override
   Future<NetworkResult<User, NetworkError>> login(String userName, String password, String fbToken, String os) async {
@@ -36,6 +45,22 @@ class Repository implements RepositoryImp {
   }
 
   @override
+  Future<NetworkResult<Map<String, dynamic>, NetworkError>> logout(String os) async {
+    final fbToken = await _getFirebaseToken();
+    final token = await _getToken();
+    final result = await _networkApi.logout(token, fbToken, os);
+
+    /* Delete all local current user data */
+    if (result.success != null) {
+      _token = null;
+      _fbToken = null;
+      await _secureStorageManager.deleteAll();
+    }
+
+    return Future.value(result);
+  }
+
+  @override
   Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals() async {
     final token = await _getToken();
     return _networkApi.getDeals(token);
@@ -44,7 +69,11 @@ class Repository implements RepositoryImp {
 
 abstract class RepositoryImp {
   //region Authenticate
+  Future<String> checkToken();
+
   Future<NetworkResult<User, NetworkError>> login(String userName, String password, String fbToken, String os);
+
+  Future<NetworkResult<Map<String, dynamic>, NetworkError>> logout(String os);
 
   //endregion
 

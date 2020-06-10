@@ -1,9 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:samapp/generated/i18n.dart';
+import 'package:samapp/repository/repository.dart';
+import 'package:samapp/ui/main/main_tab_screen.dart';
 import 'package:samapp/ui/onboarding/login_screen.dart';
 import 'package:samapp/ui/widget/footer_app_version.dart';
+import 'package:samapp/utils/log/log.dart';
 
 class SplashScreenWidget extends StatefulWidget {
   static const routerName = '/splash-screen/';
@@ -15,12 +19,18 @@ class SplashScreenWidget extends StatefulWidget {
 class _SplashScreenWidgetState extends State<SplashScreenWidget> with SingleTickerProviderStateMixin {
   AnimationController _controller;
   Animation _animation;
+  bool _hasToken;
 
   @override
   void initState() {
     _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 500));
     _controller.addStatusListener((status) {
-      if (status == AnimationStatus.completed) _navigateLoginScreen(context);
+      if (status == AnimationStatus.completed) {
+        if (_hasToken == true)
+          _navigateHomeScreen(context);
+        else
+          _navigateLoginScreen(context);
+      }
     });
     _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
     super.initState();
@@ -32,8 +42,20 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> with SingleTick
     super.dispose();
   }
 
+  Future<void> _checkToken() async {
+    final repository = RepositoryProvider.of<RepositoryImp>(context);
+    final token = await repository.checkToken();
+    _hasToken = token != null;
+    await Future.delayed(Duration(seconds: 1));
+    return;
+  }
+
   void _navigateLoginScreen(BuildContext context) {
     Navigator.of(context).pushReplacementNamed(LoginScreenWidget.routerName);
+  }
+
+  void _navigateHomeScreen(BuildContext context) {
+    Navigator.of(context).pushReplacementNamed(MainTabScreen.routerName);
   }
 
   @override
@@ -57,7 +79,7 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> with SingleTick
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             FutureBuilder(
-              future: Future.delayed(Duration(seconds: 1)),
+              future: _checkToken(),
               builder: (ctx, state) {
                 if (state.connectionState == ConnectionState.done) {
                   _controller.forward();
