@@ -48,43 +48,46 @@ class _LoginButtonState extends State<LoginButton> {
         }
       },
       child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
-        return state == LoginLoading()
-            ? Container(
-                margin: EdgeInsets.all(Dimen.spacingSmall),
-                child: SizedBox(
-                  height: 32,
-                  width: 32,
-                  child: CircularProgressIndicator(
-                    valueColor: new AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+        return AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          child: state == LoginLoading()
+              ? Container(
+                  margin: EdgeInsets.all(Dimen.spacingSmall),
+                  child: SizedBox(
+                    height: 32,
+                    width: 32,
+                    child: CircularProgressIndicator(
+                      valueColor: new AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                    ),
                   ),
-                ),
-              )
-            : Container(
-                height: Dimen.buttonHeightNormal,
-                margin: EdgeInsets.only(left: Dimen.spacingNormal, right: Dimen.spacingNormal),
-                child: RaisedButton(
-                  onPressed: _login,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0)),
-                  padding: EdgeInsets.all(0.0),
-                  child: Ink(
-                    decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Color(0xffF17423), Color(0xffFCA741)],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
+                )
+              : Container(
+                  height: Dimen.buttonHeightNormal,
+                  margin: EdgeInsets.only(left: Dimen.spacingNormal, right: Dimen.spacingNormal),
+                  child: RaisedButton(
+                    onPressed: _login,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0)),
+                    padding: EdgeInsets.all(0.0),
+                    child: Ink(
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xffF17423), Color(0xffFCA741)],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ),
+                          borderRadius: BorderRadius.circular(30.0)),
+                      child: Container(
+                        alignment: Alignment.center,
+                        child: Text(
+                          S.of(context).common_sign_in,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.button,
                         ),
-                        borderRadius: BorderRadius.circular(30.0)),
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: Text(
-                        S.of(context).common_sign_in,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.button,
                       ),
                     ),
                   ),
                 ),
-              );
+        );
       }),
     );
   }

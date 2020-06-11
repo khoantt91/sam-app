@@ -14,6 +14,7 @@ class $vi extends MessageLookupByLibrary {
   
   final messages = {
 		"common_app_version" : (version) => "Phiên bản ${version}",
+		"common_three_dot" : MessageLookupByLibrary.simpleMessage("..."),
 		"common_welcome_to" : MessageLookupByLibrary.simpleMessage("Chào mừng đến với"),
 		"common_full_app_name" : MessageLookupByLibrary.simpleMessage("Ứng Dụng Thống Kê & Quản Lý"),
 		"common_username" : MessageLookupByLibrary.simpleMessage("Tên đăng nhập"),

@@ -30,6 +30,10 @@ class S {
     return Intl.message("Phiên bản ${version}", name: 'common_app_version', args: [version]);
   }
 
+  String get common_three_dot {
+    return Intl.message("...", name: 'common_three_dot');
+  }
+
   String get common_welcome_to {
     return Intl.message("Chào mừng đến với", name: 'common_welcome_to');
   }
