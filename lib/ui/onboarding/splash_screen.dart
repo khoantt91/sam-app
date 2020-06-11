@@ -23,9 +23,10 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> with SingleTick
 
   @override
   void initState() {
-    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 500));
-    _controller.addStatusListener((status) {
+    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 1000));
+    _controller.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
+        await _checkToken();
         if (_hasToken == true)
           _navigateHomeScreen(context);
         else
@@ -40,22 +41,6 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> with SingleTick
   void dispose() {
     _controller.dispose();
     super.dispose();
-  }
-
-  Future<void> _checkToken() async {
-    final repository = RepositoryProvider.of<RepositoryImp>(context);
-    final token = await repository.checkToken();
-    _hasToken = token != null;
-    await Future.delayed(Duration(seconds: 1));
-    return;
-  }
-
-  void _navigateLoginScreen(BuildContext context) {
-    Navigator.of(context).pushReplacementNamed(LoginScreenWidget.routerName);
-  }
-
-  void _navigateHomeScreen(BuildContext context) {
-    Navigator.of(context).pushReplacementNamed(MainTabScreen.routerName);
   }
 
   @override
@@ -79,7 +64,7 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> with SingleTick
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             FutureBuilder(
-              future: _checkToken(),
+              future: Future.delayed(Duration(milliseconds: 200)),
               builder: (ctx, state) {
                 if (state.connectionState == ConnectionState.done) {
                   _controller.forward();
@@ -107,5 +92,21 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> with SingleTick
         ),
       ),
     );
+  }
+
+  Future<void> _checkToken() async {
+    final repository = RepositoryProvider.of<RepositoryImp>(context);
+    final token = await repository.checkToken();
+    _hasToken = token != null;
+    await Future.delayed(Duration(seconds: 1));
+    return;
+  }
+
+  void _navigateLoginScreen(BuildContext context) {
+    Navigator.of(context).pushReplacementNamed(LoginScreenWidget.routerName);
+  }
+
+  void _navigateHomeScreen(BuildContext context) {
+    Navigator.of(context).pushReplacementNamed(MainTabScreen.routerName);
   }
 }

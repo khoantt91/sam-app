@@ -49,24 +49,15 @@ class _HomeTabScreen extends State<HomeTabScreen> {
         statusBarHeight: MediaQuery.of(context).padding.top,
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(
-            height: Dimen.spacingNormal,
-          ),
-          RaisedButton(
-            child: Text('Logout'),
-            onPressed: () => {_logout(context)},
-          ),
           Container(
-            height: 500,
-            child: ListView.builder(
-                itemCount: 20,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text('Home Screen'),
-                    subtitle: Text('$index'),
-                  );
-                }),
+            height: Dimen.buttonHeightNormal,
+            margin: EdgeInsets.all(Dimen.spacingNormal),
+            child: RaisedButton(
+              child: Text('Logout'),
+              onPressed: () => {_logout(context)},
+            ),
           ),
         ],
       ),

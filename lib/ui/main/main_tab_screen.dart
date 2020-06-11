@@ -6,6 +6,7 @@ import 'package:samapp/ui/main/deal_tab_screen.dart';
 import 'package:samapp/ui/main/home_tab_screen.dart';
 import 'package:samapp/ui/main/listing_tab_screen.dart';
 import 'package:samapp/ui/main/notification_tab_screen.dart';
+import 'package:samapp/ui/widget/faded_index_stack.dart';
 
 class MainTabScreen extends StatefulWidget {
   static const routerName = '/main-screen/';
@@ -38,6 +39,9 @@ class _MainTabScreen extends State<MainTabScreen> {
 
   void _navigateToPage(int index) {
     switch (index) {
+      case 0:
+        if (_pages.indexWhere((page) => page is HomeTabScreen) == -1) _pages.add(HomeTabScreen());
+        break;
       case 1:
         if (_pages.indexWhere((page) => page is ListingTabScreen) == -1) _pages.add(ListingTabScreen());
         break;
@@ -63,7 +67,7 @@ class _MainTabScreen extends State<MainTabScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
-        child: IndexedStack(
+        child: FadeIndexedStack(
           index: _indexPageInList,
           children: _pages,
         ),
