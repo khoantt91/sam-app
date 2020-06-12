@@ -1,15 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:samapp/bloc/event/tab_deal_event.dart';
 import 'package:samapp/bloc/state/tab_deal_state.dart';
 import 'package:samapp/bloc/tab_deal_bloc.dart';
 import 'package:samapp/generated/i18n.dart';
-import 'package:samapp/repository/repository.dart';
 import 'package:samapp/ui/widget/common_app_bar.dart';
 import 'package:samapp/ui/widget/deal_listview.dart';
 import 'package:samapp/ui/widget/main_filter.dart';
 import 'package:samapp/utils/constant/dimen.dart';
-import 'package:samapp/utils/log/log.dart';
 
 class DealTabScreen extends StatefulWidget {
   const DealTabScreen({Key key}) : super(key: key);
@@ -20,12 +20,12 @@ class DealTabScreen extends StatefulWidget {
 
 class _DealTabScreenState extends State<DealTabScreen> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+  Completer<Null> _refreshCompleter;
 
   Future<Null> _getDealData() async {
     BlocProvider.of<TabDealBloc>(context).add(GetData());
-    BlocListener<TabDealBloc, TabDealState>(listener: (ctx, state) {
-      if (state is DataLoadDone) return null;
-    });
+    _refreshCompleter = Completer<Null>();
+    return _refreshCompleter.future;
   }
 
   @override
@@ -55,6 +55,12 @@ class _DealTabScreenState extends State<DealTabScreen> {
               duration: Duration(seconds: 1),
             ),
           );
+          return;
+        }
+
+        /* Handle Load Done => hide refresh indicator */
+        if (state is DataLoadDone) {
+          if (!_refreshCompleter.isCompleted) _refreshCompleter.complete(null);
           return;
         }
       },

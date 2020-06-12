@@ -30,11 +30,8 @@ class _DealListViewState extends State<DealListView> {
       condition: (previousState, state) => (state is InitialState || state is DataLoadDone || state is DataLoading) ? true : false,
       builder: (BuildContext context, TabDealState state) {
         if (state is DataLoadDone) return _buildListDeal(state);
-        if (state is DataLoading) return _buildLoadMoreIndicator(context);
         return SingleChildScrollView(
-          child: SizedBox(
-            height: double.infinity,
-          ),
+          child: SizedBox(),
         );
       },
     );
