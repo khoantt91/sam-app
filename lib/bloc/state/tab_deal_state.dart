@@ -17,18 +17,20 @@ class DataLoading extends TabDealState {}
 
 class DataLoadingMore extends TabDealState {}
 
-class DataLoadMore extends TabDealState {}
-
 class DataLoadDone extends TabDealState {
   final List<Deal> deals;
+  final bool hasReachedMax;
 
-  const DataLoadDone(this.deals);
+  const DataLoadDone(this.deals, this.hasReachedMax);
 }
 
 class DataLoadError extends TabDealState {
   final String error;
 
   const DataLoadError(this.error);
+
+  @override
+  List<Object> get props => [error];
 }
 
 class DataTotalItem extends TabDealState {

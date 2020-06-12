@@ -9,6 +9,7 @@ import 'package:samapp/ui/widget/common_app_bar.dart';
 import 'package:samapp/ui/widget/deal_listview.dart';
 import 'package:samapp/ui/widget/main_filter.dart';
 import 'package:samapp/utils/constant/dimen.dart';
+import 'package:samapp/utils/log/log.dart';
 
 class DealTabScreen extends StatefulWidget {
   const DealTabScreen({Key key}) : super(key: key);
@@ -22,7 +23,7 @@ class _DealTabScreenState extends State<DealTabScreen> {
 
   Future<Null> _getDealData() async {
     BlocProvider.of<TabDealBloc>(context).add(GetData());
-    await BlocListener<TabDealBloc, TabDealState>(listener: (ctx, state) {
+    BlocListener<TabDealBloc, TabDealState>(listener: (ctx, state) {
       if (state is DataLoadDone) return null;
     });
   }
@@ -37,14 +38,17 @@ class _DealTabScreenState extends State<DealTabScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String _currentErrorMessage = '';
     return BlocListener<TabDealBloc, TabDealState>(
       listener: (ctx, state) {
         /* Handle Error */
         if (state is DataLoadError) {
+          if (_currentErrorMessage == state.error) return;
+          _currentErrorMessage = state.error;
           Scaffold.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                '${state.error}',
+                _currentErrorMessage,
                 style: TextStyle(color: Colors.red),
               ),
               backgroundColor: Colors.white,
@@ -86,15 +90,7 @@ class _DealTabScreenState extends State<DealTabScreen> {
                         key: _refreshIndicatorKey,
                         color: Theme.of(context).primaryColor,
                         onRefresh: _getDealData,
-                        child: NotificationListener<ScrollNotification>(
-                            onNotification: (scrollInfo) {
-                              if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-                                /* LOAD MORE */
-                                BlocProvider.of<TabDealBloc>(context).add(GetMoreData());
-                              }
-                              return;
-                            },
-                            child: DealListView()),
+                        child: DealListView(),
                       ),
                     ),
                   ],
