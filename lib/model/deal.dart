@@ -28,7 +28,7 @@ class Deal {
 
   Map<String, dynamic> toJson() => _$DealToJson(this);
 
-  String getDealLabel() {
+  String getDealLabelImage() {
     if (this.scorecardType == null) return 'assets/images/ic_deal_label_l_0.png';
     switch (this.scorecardType.toUpperCase()) {
       case 'H2':

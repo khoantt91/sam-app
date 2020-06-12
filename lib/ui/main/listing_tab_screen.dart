@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:samapp/generated/i18n.dart';
 import 'package:samapp/model/deal.dart';
 import 'package:samapp/ui/widget/common_app_bar.dart';
-import 'package:samapp/ui/widget/deal_item.dart';
+import 'package:samapp/ui/main/item/deal_item.dart';
 import 'package:samapp/utils/constant/dimen.dart';
 
 class ListingTabScreen extends StatefulWidget {

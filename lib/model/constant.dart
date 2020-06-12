@@ -1,4 +1,6 @@
 /* ENUM: ListingTypes */
+import 'package:flutter/material.dart';
+
 enum ListingTypes { BUY, RENT }
 
 extension ListingTypesExtention on ListingTypes {
@@ -56,6 +58,21 @@ extension ListingScorecardTypesExtention on ListingScorecardTypes {
         return 1655;
       default:
         return -1;
+    }
+  }
+
+  Color get colorBg {
+    switch (this) {
+      case ListingScorecardTypes.HIGH:
+        return Color(0xFF3ba500);
+      case ListingScorecardTypes.MEDIUM:
+        return Color(0xFFff8100);
+      case ListingScorecardTypes.LOW:
+        return Color(0xFFae0303);
+      case ListingScorecardTypes.UNCLASSIFIED:
+        return Color(0xFF666666);
+      default:
+        return Color(0xFF666666);
     }
   }
 }

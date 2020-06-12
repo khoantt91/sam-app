@@ -1,7 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:samapp/model/constant.dart';
 import 'package:samapp/model/deal.dart';
+import 'package:samapp/ui/widget/scorecard_type_widget.dart';
 import 'package:samapp/utils/constant/dimen.dart';
 
 class DealItem extends StatelessWidget {
@@ -23,7 +25,7 @@ class DealItem extends StatelessWidget {
                 width: 56,
                 height: 56,
                 child: Image.asset(
-                  _deal.getDealLabel(),
+                  _deal.getDealLabelImage(),
                   fit: BoxFit.contain,
                 ),
               ),
@@ -123,70 +125,10 @@ class DealItem extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                            decoration: BoxDecoration(
-                              color: Color(0xFF3ba500),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            padding: EdgeInsets.only(left: Dimen.spacingTiny, right: Dimen.spacingTiny, top: 2, bottom: 2),
-                            child: Text(
-                              '${_deal.listingClassify != null ? _deal.listingClassify.containsKey('SCORECARD_HIGH') ? _deal.listingClassify['SCORECARD_HIGH'] : 0 : 0}H',
-                              style: Theme.of(context).textTheme.bodyText2.copyWith(
-                                    fontSize: Dimen.fontTiny,
-                                    color: Colors.white,
-                                  ),
-                            )),
-                        SizedBox(
-                          width: Dimen.spacingSuperTiny,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Color(0xFFff8100),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          padding: EdgeInsets.only(left: Dimen.spacingTiny, right: Dimen.spacingTiny, top: 2, bottom: 2),
-                          child: Text(
-                            '${_deal.listingClassify != null ? _deal.listingClassify.containsKey('SCORECARD_MEDIUM') ? _deal.listingClassify['SCORECARD_MEDIUM'] : 0 : 0}M',
-                            style: Theme.of(context).textTheme.bodyText2.copyWith(
-                                  fontSize: Dimen.fontTiny,
-                                  color: Colors.white,
-                                ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: Dimen.spacingSuperTiny,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Color(0xFFae0303),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          padding: EdgeInsets.only(left: Dimen.spacingTiny, right: Dimen.spacingTiny, top: 2, bottom: 2),
-                          child: Text(
-                            '${_deal.listingClassify != null ? _deal.listingClassify.containsKey('SCORECARD_LOW') ? _deal.listingClassify['SCORECARD_LOW'] : 0 : 0}L',
-                            style: Theme.of(context).textTheme.bodyText2.copyWith(
-                                  fontSize: Dimen.fontTiny,
-                                  color: Colors.white,
-                                ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: Dimen.spacingSuperTiny,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Color(0xFF666666),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          padding: EdgeInsets.only(left: Dimen.spacingTiny, right: Dimen.spacingTiny, top: 2, bottom: 2),
-                          child: Text(
-                            '${_deal.listingClassify != null ? _deal.listingClassify.containsKey('SCORECARD_UNCLASSIFIED') ? _deal.listingClassify['SCORECARD_UNCLASSIFIED'] : 0 : 0}U',
-                            style: Theme.of(context).textTheme.bodyText2.copyWith(
-                                  fontSize: Dimen.fontTiny,
-                                  color: Colors.white,
-                                ),
-                          ),
-                        ),
+                        ScorecardTypeWidget(_deal, ListingScorecardTypes.HIGH),
+                        ScorecardTypeWidget(_deal, ListingScorecardTypes.MEDIUM),
+                        ScorecardTypeWidget(_deal, ListingScorecardTypes.LOW),
+                        ScorecardTypeWidget(_deal, ListingScorecardTypes.UNCLASSIFIED),
                         Expanded(
                             flex: 1,
                             child: Align(

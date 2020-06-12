@@ -5,7 +5,7 @@ import 'package:samapp/bloc/state/tab_deal_state.dart';
 import 'package:samapp/bloc/tab_deal_bloc.dart';
 import 'package:samapp/utils/constant/dimen.dart';
 
-import 'deal_item.dart';
+import '../main/item/deal_item.dart';
 
 class DealListView extends StatefulWidget {
   @override
