@@ -39,8 +39,12 @@ class DataTotalItem extends TabDealState {
   const DataTotalItem(this.total);
 }
 
+class DataSearch extends TabDealState {}
+
 class DataFilter extends TabDealState {
   final bool hasFilter;
 
   const DataFilter(this.hasFilter);
 }
+
+class DataStopSearch extends TabDealState {}

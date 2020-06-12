@@ -68,6 +68,8 @@ class TabDealBloc extends Bloc<TabDealEvent, TabDealState> {
   Stream<TabDealState> mapEventToState(TabDealEvent event) async* {
     if (event is GetData) yield* _handleGetData(event);
     if (event is GetMoreData) yield* _handleGetMoreData(event);
+    if (event is DealStartSearch) yield* _handleStartSearch(event);
+    if (event is DealStopSearch) yield DataStopSearch();
   }
 
   Stream<TabDealState> _handleGetData(GetData event) async* {
@@ -145,6 +147,10 @@ class TabDealBloc extends Bloc<TabDealEvent, TabDealState> {
       yield DataLoadDone(_deals, _deals.length >= _totalItems);
       _isLoading = false;
     }
+  }
+
+  Stream<TabDealState> _handleStartSearch(DealStartSearch event) async* {
+    yield DataSearch();
   }
 }
 

@@ -13,12 +13,15 @@ class CommonAppBar extends StatefulWidget implements PreferredSizeWidget {
   final bool showBackIcon;
   final bool showShareIcon;
 
+  final Function searchEvent;
+
   CommonAppBar(
     this._title, {
     this.showSearchIcon = false,
     this.showBackIcon = false,
     this.showShareIcon = false,
     this.statusBarHeight = 0,
+    this.searchEvent,
   });
 
   @override
@@ -72,15 +75,19 @@ class _CommonAppBarState extends State<CommonAppBar> {
                         : SizedBox(),
                     Expanded(flex: 1, child: SizedBox()),
                     widget.showSearchIcon
-                        ? Icon(
-                            Icons.search,
-                            color: Colors.white,
+                        ? InkWell(
+                            child: Container(
+                              padding: EdgeInsets.all(Dimen.spacingSmall),
+                              child: Icon(
+                                Icons.search,
+                                color: Colors.white,
+                              ),
+                            ),
+                            onTap: widget.searchEvent,
                           )
                         : SizedBox(),
                     widget.showShareIcon
-                        ? const SizedBox(
-                            width: Dimen.spacingSmall,
-                          )
+                        ? const SizedBox()
                         : const SizedBox(
                             width: Dimen.spacingNormal,
                           ),
