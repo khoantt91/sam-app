@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:samapp/model/deal.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:samapp/bloc/state/tab_deal_state.dart';
+import 'package:samapp/bloc/tab_deal_bloc.dart';
 import 'package:samapp/utils/constant/dimen.dart';
 
 import 'deal_item.dart';
 
 class DealListView extends StatefulWidget {
-  final List<Deal> _dealList;
-
-  DealListView(this._dealList);
-
   @override
   _DealListViewState createState() => _DealListViewState();
 }
@@ -16,25 +14,33 @@ class DealListView extends StatefulWidget {
 class _DealListViewState extends State<DealListView> {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: widget._dealList.length + 1,
-        itemBuilder: (context, index) {
-          if (widget._dealList.isEmpty) return SizedBox();
-          return (index == widget._dealList.length)
-              ? Center(
-                  child: Container(
-                    margin: EdgeInsets.all(Dimen.spacingSmall),
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 1,
-                        valueColor: new AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-                      ),
-                    ),
-                  ),
-                )
-              : DealItem(widget._dealList[index]);
-        });
+    return BlocBuilder<TabDealBloc, TabDealState>(
+      builder: (BuildContext context, TabDealState state) {
+        return state is DataLoadDone
+            ? ListView.builder(
+                itemCount: state.deals.length + 1,
+                itemBuilder: (context, index) {
+                  if (state.deals.isEmpty) return SizedBox();
+                  return (index == state.deals.length)
+                      ? Center(
+                          child: Container(
+                            margin: EdgeInsets.all(Dimen.spacingSmall),
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 1,
+                                valueColor: new AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                              ),
+                            ),
+                          ),
+                        )
+                      : DealItem(state.deals[index]);
+                })
+            : SingleChildScrollView(
+                child: SizedBox(),
+              );
+      },
+    );
   }
 }

@@ -11,7 +11,11 @@ abstract class TabDealState extends Equatable {
   List<Object> get props => [];
 }
 
+class InitialState extends TabDealState {}
+
 class DataLoading extends TabDealState {}
+
+class DataLoadingMore extends TabDealState {}
 
 class DataLoadMore extends TabDealState {}
 
@@ -25,6 +29,12 @@ class DataLoadError extends TabDealState {
   final String error;
 
   const DataLoadError(this.error);
+}
+
+class DataTotalItem extends TabDealState {
+  final int total;
+
+  const DataTotalItem(this.total);
 }
 
 class DataFilter extends TabDealState {

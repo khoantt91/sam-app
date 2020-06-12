@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:samapp/model/constant.dart';
 import 'package:samapp/model/deal.dart';
 import 'package:samapp/repository/network/api/base_api.dart';
 import 'package:samapp/repository/network/model/network_error.dart';
@@ -10,22 +11,32 @@ class DealApi {
 
   DealApi(this._dio);
 
-  Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals(String token) async {
+  Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals({
+    String token,
+    int fromDate,
+    int toDate,
+    List<ListingTypes> listingTypes,
+    List<DealScorecardTypes> dealScorecardTypes,
+    List<DealStatus> dealStatus,
+    int page: 1,
+    int numberItem: 20,
+    String textSearch,
+  }) async {
     try {
       final params = {
-        "fromDate": 1588923522589,
-        "listingTypes": [1, 2],
-        "scorecardTypes": ["H2", "H1", "M2", "M1", "L1", "L0"],
-        "toDate": 1591601922589,
-        "statusDeals": [24, 25, 26, 29, 27, 28]
+        "fromDate": fromDate,
+        "listingTypes": listingTypes.map((e) => e.id).toList(),
+        "scorecardTypes": dealScorecardTypes.map((e) => e.stringId).toList(),
+        "toDate": toDate,
+        "statusDeals": dealStatus.map((e) => e.id).toList()
       };
       var result = await _dio.post(
-        'deals/1/20?access_token=$token',
+        'deals/$page/$numberItem?access_token=$token',
         data: params,
       );
       return handleListResponse<Deal>(result);
-    } catch (ex) {
-      throw ex;
+    } on DioError catch (ex) {
+      return handleException(ex);
     }
   }
 }

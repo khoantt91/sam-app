@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:samapp/bloc/tab_deal_bloc.dart';
 import 'package:samapp/generated/i18n.dart';
+import 'package:samapp/repository/repository.dart';
 import 'package:samapp/ui/main/chat_tab_screen.dart';
 import 'package:samapp/ui/main/deal_tab_screen.dart';
 import 'package:samapp/ui/main/home_tab_screen.dart';
@@ -66,10 +69,17 @@ class _MainTabScreen extends State<MainTabScreen> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      body: Container(
-        child: FadeIndexedStack(
-          index: _indexPageInList,
-          children: _pages,
+      body: MultiBlocProvider(
+        providers: [
+          BlocProvider<TabDealBloc>(
+            create: (context) => TabDealBloc(RepositoryProvider.of<RepositoryImp>(context)),
+          ),
+        ],
+        child: Container(
+          child: FadeIndexedStack(
+            index: _indexPageInList,
+            children: _pages,
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(

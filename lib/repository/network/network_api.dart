@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:samapp/model/constant.dart';
 import 'package:samapp/model/deal.dart';
 import 'package:samapp/repository/network/api/authenticate_api.dart';
 import 'package:samapp/repository/network/api/deal_api.dart';
@@ -51,7 +52,28 @@ class NetworkAPI implements NetworkImp {
       _authenticateAPI.logout(os, fbToken, token);
 
   @override
-  Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals(String token) => _dealApi.getDeals(token);
+  Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals({
+    String token,
+    int fromDate,
+    int toDate,
+    List<ListingTypes> listingTypes,
+    List<DealScorecardTypes> dealScorecardTypes,
+    List<DealStatus> dealStatus,
+    int page,
+    int numberItem,
+    String textSearch,
+  }) =>
+      _dealApi.getDeals(
+        token: token,
+        fromDate: fromDate,
+        toDate: toDate,
+        listingTypes: listingTypes,
+        dealScorecardTypes: dealScorecardTypes,
+        dealStatus: dealStatus,
+        page: page,
+        numberItem: numberItem,
+        textSearch: textSearch,
+      );
 }
 
 abstract class NetworkImp {
@@ -63,6 +85,16 @@ abstract class NetworkImp {
   //endregion
 
   //region Deal
-  Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals(String token);
+  Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals({
+    String token,
+    int fromDate,
+    int toDate,
+    List<ListingTypes> listingTypes,
+    List<DealScorecardTypes> dealScorecardTypes,
+    List<DealStatus> dealStatus,
+    int page,
+    int numberItem,
+    String textSearch,
+  });
 //endregion
 }

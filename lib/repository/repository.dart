@@ -1,3 +1,4 @@
+import 'package:samapp/model/constant.dart';
 import 'package:samapp/model/deal.dart';
 import 'package:samapp/repository/local/secure_storage/secure_storage_constant.dart';
 import 'package:samapp/repository/local/secure_storage/secure_storage_manager.dart';
@@ -61,9 +62,27 @@ class Repository implements RepositoryImp {
   }
 
   @override
-  Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals() async {
+  Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals({
+    int fromDate,
+    int toDate,
+    List<ListingTypes> listingTypes,
+    List<DealScorecardTypes> dealScorecardTypes,
+    List<DealStatus> dealStatus,
+    int page,
+    int numberItem,
+    String textSearch,
+  }) async {
     final token = await _getToken();
-    return _networkApi.getDeals(token);
+    return _networkApi.getDeals(
+        token: token,
+        fromDate: fromDate,
+        toDate: toDate,
+        listingTypes: listingTypes,
+        dealScorecardTypes: dealScorecardTypes,
+        dealStatus: dealStatus,
+        page: page,
+        numberItem: numberItem,
+        textSearch: textSearch);
   }
 }
 
@@ -78,7 +97,16 @@ abstract class RepositoryImp {
   //endregion
 
   //region Deal
-  Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals();
+  Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals({
+    int fromDate,
+    int toDate,
+    List<ListingTypes> listingTypes,
+    List<DealScorecardTypes> dealScorecardTypes,
+    List<DealStatus> dealStatus,
+    int page,
+    int numberItem,
+    String textSearch,
+  });
 //endregion
 
 }

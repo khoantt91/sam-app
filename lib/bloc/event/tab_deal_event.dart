@@ -23,8 +23,6 @@ class GetData extends TabDealEvent {
 
   GetData({this.listingTypes, this.scorecardTypes, this.dealStatus, this.rangeData, this.keySearch});
 
-  @override
-  List<Object> get props => [listingTypes, scorecardTypes, dealStatus, rangeData, keySearch];
 }
 
 class GetMoreData extends TabDealEvent {
