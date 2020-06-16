@@ -46,6 +46,21 @@ extension ListingScorecardTypesExtention on ListingScorecardTypes {
     }
   }
 
+  String get shortName {
+    switch (this) {
+      case ListingScorecardTypes.HIGH:
+        return 'H';
+      case ListingScorecardTypes.MEDIUM:
+        return 'M';
+      case ListingScorecardTypes.LOW:
+        return 'L';
+      case ListingScorecardTypes.UNCLASSIFIED:
+        return 'U';
+      default:
+        return '';
+    }
+  }
+
   int get id {
     switch (this) {
       case ListingScorecardTypes.HIGH:
@@ -116,6 +131,25 @@ extension DealScorecardTypesExtention on DealScorecardTypes {
         return "Low 0";
       default:
         return '';
+    }
+  }
+
+  Color get colorBg {
+    switch (this) {
+      case DealScorecardTypes.HIGH_2:
+        return Color(0xFF3ba500);
+      case DealScorecardTypes.HIGH_1:
+        return Color(0xFF6dc309);
+      case DealScorecardTypes.MEDIUM_2:
+        return Color(0xFFff8100);
+      case DealScorecardTypes.MEDIUM_1:
+        return Color(0xFFffa140);
+      case DealScorecardTypes.LOW_1:
+        return Color(0xFFae0303);
+      case DealScorecardTypes.LOW_0:
+        return Color(0xFFfc4040);
+      default:
+        return Color(0xFFfc4040);
     }
   }
 }

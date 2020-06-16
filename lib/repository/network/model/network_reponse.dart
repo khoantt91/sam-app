@@ -19,4 +19,7 @@ class NetworkResponse {
   factory NetworkResponse.fromJson(Map<String, dynamic> json) => _$NetworkResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$NetworkResponseToJson(this);
+
+  @override
+  String toString() => '$code - $message';
 }

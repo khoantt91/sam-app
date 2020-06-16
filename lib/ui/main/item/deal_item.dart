@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:samapp/model/constant.dart';
 import 'package:samapp/model/deal.dart';
-import 'package:samapp/ui/widget/scorecard_type_widget.dart';
+import 'package:samapp/ui/widget/listing_scorecard_type_widget.dart';
 import 'package:samapp/utils/constant/dimen.dart';
 
 class DealItem extends StatelessWidget {
@@ -125,10 +125,10 @@ class DealItem extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        ScorecardTypeWidget(_deal, ListingScorecardTypes.HIGH),
-                        ScorecardTypeWidget(_deal, ListingScorecardTypes.MEDIUM),
-                        ScorecardTypeWidget(_deal, ListingScorecardTypes.LOW),
-                        ScorecardTypeWidget(_deal, ListingScorecardTypes.UNCLASSIFIED),
+                        ListingScorecardTypeWidget(_deal, ListingScorecardTypes.HIGH),
+                        ListingScorecardTypeWidget(_deal, ListingScorecardTypes.MEDIUM),
+                        ListingScorecardTypeWidget(_deal, ListingScorecardTypes.LOW),
+                        ListingScorecardTypeWidget(_deal, ListingScorecardTypes.UNCLASSIFIED),
                         Expanded(
                             flex: 1,
                             child: Align(

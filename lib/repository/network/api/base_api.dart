@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:samapp/model/deal.dart';
+import 'package:samapp/model/listing.dart';
 import 'package:samapp/model/user.dart';
 import 'package:samapp/repository/network/model/network_error.dart';
 import 'package:samapp/repository/network/model/network_reponse.dart';
 import 'package:samapp/repository/network/model/network_result.dart';
 import 'package:samapp/repository/network/model/network_result_paging.dart';
-import 'package:samapp/utils/log/log.dart';
 
 Type typeOf<T>() => T;
 
@@ -33,6 +33,8 @@ NetworkResult<T, NetworkError> handleSingleResponse<T>(Response<dynamic> result)
     return NetworkResult(User.fromJson(networkResponse.data) as T, null);
   } else if (T == Deal) {
     return NetworkResult(Deal.fromJson(networkResponse.data) as T, null);
+  } else if (T == Listing) {
+    return NetworkResult(Listing.fromJson(networkResponse.data) as T, null);
   } else
     return NetworkResult(null, NetworkError(code: NetworkError.ERROR_CODE_PARSING, message: 'Unknown this model ????'));
 }
@@ -66,6 +68,8 @@ NetworkResult<NetworkResultPaging<S>, NetworkError> handleListResponse<S>(Respon
       listModel.add(User.fromJson(element) as S);
     } else if (S == Deal) {
       listModel.add(Deal.fromJson(element) as S);
+    } else if (S == Listing) {
+      listModel.add(Listing.fromJson(element) as S);
     }
   });
 

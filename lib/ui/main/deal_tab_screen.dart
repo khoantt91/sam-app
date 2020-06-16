@@ -11,7 +11,6 @@ import 'package:samapp/ui/widget/common_app_bar_search_widget.dart';
 import 'package:samapp/ui/widget/deal_listview.dart';
 import 'package:samapp/ui/widget/main_filter.dart';
 import 'package:samapp/utils/constant/dimen.dart';
-import 'package:samapp/utils/log/log.dart';
 
 class DealTabScreen extends StatefulWidget {
   const DealTabScreen({Key key}) : super(key: key);
@@ -25,6 +24,7 @@ class _DealTabScreenState extends State<DealTabScreen> {
   Completer<Null> _refreshCompleter;
 
   final TextEditingController _controller = TextEditingController();
+  String _oldSearchText = "";
 
   Future<Null> _getDealData() async {
     BlocProvider.of<TabDealBloc>(context).add(GetData(keySearch: _controller.text.toString()));
@@ -88,13 +88,23 @@ class _DealTabScreenState extends State<DealTabScreen> {
             controller: _controller,
             cancelSearch: () {
               BlocProvider.of<TabDealBloc>(context).add(DealStopSearch());
+              if (_oldSearchText != _controller.text) {
+                _oldSearchText = _controller.text;
+                _refreshIndicatorKey.currentState.show();
+              }
             },
             searchText: (searchKey) {
-              _refreshIndicatorKey.currentState.show();
+              if (_oldSearchText != _controller.text) {
+                _oldSearchText = _controller.text;
+                _refreshIndicatorKey.currentState.show();
+              }
             },
           );
           final height = constraint.maxHeight;
-          return BlocBuilder<TabDealBloc, TabDealState>(builder: (ctx, state) {
+          return BlocBuilder<TabDealBloc, TabDealState>(condition: (previousState, state) {
+            if (state is InitialState || state is DataStopSearch || state is DataSearch) return true;
+            return false;
+          }, builder: (ctx, state) {
             return Scaffold(
                 appBar: state is DataSearch ? appSearchBar : appBar,
                 body: Container(

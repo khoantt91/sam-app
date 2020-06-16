@@ -1,5 +1,6 @@
 import 'package:samapp/model/constant.dart';
 import 'package:samapp/model/deal.dart';
+import 'package:samapp/model/listing.dart';
 import 'package:samapp/repository/local/secure_storage/secure_storage_constant.dart';
 import 'package:samapp/repository/local/secure_storage/secure_storage_manager.dart';
 import 'package:samapp/repository/network/network_api.dart';
@@ -84,6 +85,27 @@ class Repository implements RepositoryImp {
         numberItem: numberItem,
         textSearch: textSearch);
   }
+
+  @override
+  Future<NetworkResult<NetworkResultPaging<Listing>, NetworkError>> getListings({
+    int fromDate,
+    int toDate,
+    List<ListingScorecardTypes> listingScorecardTypes,
+    int page,
+    int numberItem,
+    String textSearch,
+  }) async {
+    final token = await _getToken();
+    return _networkApi.getListings(
+      token: token,
+      fromDate: fromDate,
+      toDate: toDate,
+      listingScorecardTypes: listingScorecardTypes,
+      page: page,
+      numberItem: numberItem,
+      textSearch: textSearch,
+    );
+  }
 }
 
 abstract class RepositoryImp {
@@ -107,6 +129,17 @@ abstract class RepositoryImp {
     int numberItem,
     String textSearch,
   });
+
 //endregion
 
+  //region Listing
+  Future<NetworkResult<NetworkResultPaging<Listing>, NetworkError>> getListings({
+    int fromDate,
+    int toDate,
+    List<ListingScorecardTypes> listingScorecardTypes,
+    int page,
+    int numberItem,
+    String textSearch,
+  });
+  //endregion
 }

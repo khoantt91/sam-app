@@ -17,15 +17,14 @@ class CommonSearchAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Function searchText;
   final TextEditingController controller;
 
-  CommonSearchAppBar(this._title, {
-    this.showSearchIcon = false,
-    this.showBackIcon = false,
-    this.showShareIcon = false,
-    this.statusBarHeight = 0,
-    this.cancelSearch,
-    this.searchText,
-    this.controller
-  });
+  CommonSearchAppBar(this._title,
+      {this.showSearchIcon = false,
+      this.showBackIcon = false,
+      this.showShareIcon = false,
+      this.statusBarHeight = 0,
+      this.cancelSearch,
+      this.searchText,
+      this.controller});
 
   @override
   _CommonSearchAppBar createState() => _CommonSearchAppBar();
@@ -35,7 +34,6 @@ class CommonSearchAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CommonSearchAppBar extends State<CommonSearchAppBar> {
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -94,14 +92,13 @@ class _CommonSearchAppBar extends State<CommonSearchAppBar> {
                     child: Text(
                       'Hủy',
                       textAlign: TextAlign.center,
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .bodyText1
-                          .copyWith(color: Colors.white),
+                      style: Theme.of(context).textTheme.bodyText1.copyWith(color: Colors.white),
                     ),
                   ),
-                  onTap: widget.cancelSearch,
+                  onTap: () {
+                    widget.controller.text = "";
+                    widget.cancelSearch();
+                  },
                 ),
               ],
             ),

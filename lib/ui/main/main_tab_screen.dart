@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:samapp/bloc/listing_tab_bloc.dart';
 import 'package:samapp/bloc/tab_deal_bloc.dart';
 import 'package:samapp/generated/i18n.dart';
 import 'package:samapp/repository/repository.dart';
@@ -73,6 +74,9 @@ class _MainTabScreen extends State<MainTabScreen> {
         providers: [
           BlocProvider<TabDealBloc>(
             create: (context) => TabDealBloc(RepositoryProvider.of<RepositoryImp>(context)),
+          ),
+          BlocProvider<ListingTabBloc>(
+            create: (context) => ListingTabBloc(RepositoryProvider.of<RepositoryImp>(context)),
           ),
         ],
         child: Container(

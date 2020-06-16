@@ -2,8 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:samapp/model/constant.dart';
 import 'package:samapp/model/deal.dart';
+import 'package:samapp/model/listing.dart';
 import 'package:samapp/repository/network/api/authenticate_api.dart';
 import 'package:samapp/repository/network/api/deal_api.dart';
+import 'package:samapp/repository/network/api/listing_api.dart';
 import 'package:samapp/repository/network/constant/network_config.dart';
 import 'package:samapp/repository/network/model/network_error.dart';
 import 'package:samapp/repository/network/model/network_result.dart';
@@ -15,6 +17,7 @@ class NetworkAPI implements NetworkImp {
   Dio _dio;
   AuthenticateAPI _authenticateAPI;
   DealApi _dealApi;
+  ListingApi _listingApi;
 
   NetworkAPI() {
     /* Config Dio */
@@ -41,6 +44,7 @@ class NetworkAPI implements NetworkImp {
     /* Init API */
     _authenticateAPI = AuthenticateAPI(_dio);
     _dealApi = DealApi(_dio);
+    _listingApi = ListingApi(_dio);
   }
 
   @override
@@ -74,6 +78,26 @@ class NetworkAPI implements NetworkImp {
         numberItem: numberItem,
         textSearch: textSearch,
       );
+
+  @override
+  Future<NetworkResult<NetworkResultPaging<Listing>, NetworkError>> getListings({
+    String token,
+    int fromDate,
+    int toDate,
+    List<ListingScorecardTypes> listingScorecardTypes,
+    int page,
+    int numberItem,
+    String textSearch,
+  }) => _listingApi.getListings(
+      token: token,
+      fromDate: fromDate,
+      toDate: toDate,
+      listingScorecardTypes: listingScorecardTypes,
+      page: page,
+      numberItem: numberItem,
+      textSearch: textSearch,
+    );
+
 }
 
 abstract class NetworkImp {
@@ -96,5 +120,17 @@ abstract class NetworkImp {
     int numberItem,
     String textSearch,
   });
-//endregion
+  //endregion
+
+  //region Listing
+  Future<NetworkResult<NetworkResultPaging<Listing>, NetworkError>> getListings({
+    String token,
+    int fromDate,
+    int toDate,
+    List<ListingScorecardTypes> listingScorecardTypes,
+    int page,
+    int numberItem,
+    String textSearch,
+  });
+  //endregion
 }
