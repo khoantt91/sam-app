@@ -47,6 +47,7 @@ class _DealTabScreenState extends State<DealTabScreen> {
       listener: (ctx, state) {
         /* Handle Error */
         if (state is DataLoadError) {
+          if (!_refreshCompleter.isCompleted) _refreshCompleter.complete(null);
           if (_currentErrorMessage == state.error) return;
           _currentErrorMessage = state.error;
           Scaffold.of(context).showSnackBar(

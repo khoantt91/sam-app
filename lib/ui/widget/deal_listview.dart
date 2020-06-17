@@ -31,7 +31,11 @@ class _DealListViewState extends State<DealListView> {
       builder: (BuildContext context, TabDealState state) {
         if (state is DataLoadDone) return _buildListDeal(state);
         return SingleChildScrollView(
-          child: SizedBox(),
+          physics: AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+          ),
         );
       },
     );

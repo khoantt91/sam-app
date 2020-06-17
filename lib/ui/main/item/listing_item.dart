@@ -6,7 +6,6 @@ import 'package:samapp/model/listing.dart';
 import 'package:samapp/ui/widget/deal_scorecard_type_widget.dart';
 import 'package:samapp/ui/widget/id_box_widget.dart';
 import 'package:samapp/ui/widget/left_icon_text_widget.dart';
-import 'package:samapp/utils/constant/app_color.dart';
 import 'package:samapp/utils/constant/dimen.dart';
 
 class ListingItem extends StatelessWidget {

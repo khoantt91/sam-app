@@ -32,9 +32,13 @@ class _ListingListViewWidgetState extends BaseState<ListingListViewWidget> {
       condition: (previousState, state) =>
           (state is ListingTabInitial || state is ListingTabGetDataSuccess || state is ListingTabGetDataInProgress) ? true : false,
       builder: (BuildContext context, ListingTabState state) {
-        if (state is ListingTabGetDataSuccess) return _buildListListing(state);
+        if (state is ListingTabGetDataSuccess && (state as ListingTabGetDataSuccess).listings.isNotEmpty) return _buildListListing(state);
         return SingleChildScrollView(
-          child: SizedBox(),
+          physics: AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+          ),
         );
       },
     );
