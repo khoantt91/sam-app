@@ -30,6 +30,7 @@ class ListingApi {
         "textSearch": textSearch,
         "minPrice": 100000000,
         "minSize": 5,
+        "listingTypeIds": [1],
       };
       var result = await _dio.post(
         'seller/listings/$page/$numberItem?access_token=$token',

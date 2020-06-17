@@ -8,6 +8,7 @@ import 'package:samapp/bloc/state/listing_tab_state.dart';
 import 'package:samapp/generated/i18n.dart';
 import 'package:samapp/ui/common/base_statefull_widget.dart';
 import 'package:samapp/ui/widget/common_app_bar.dart';
+import 'package:samapp/ui/widget/common_app_bar_search_widget.dart';
 import 'package:samapp/ui/widget/listing_listview_widget.dart';
 import 'package:samapp/ui/widget/main_filter.dart';
 import 'package:samapp/utils/constant/dimen.dart';
@@ -75,38 +76,67 @@ class _ListingTabScreenState extends BaseState<ListingTabScreen> {
           showSearchIcon: true,
           showShareIcon: true,
           statusBarHeight: MediaQuery.of(context).padding.top,
+          searchEvent: () {
+            BlocProvider.of<ListingTabBloc>(context).add(ListingTabStartSearching());
+          },
+        );
+
+        final appSearchBar = CommonSearchAppBar(
+          S.of(context).listing_screen_title,
+          showSearchIcon: true,
+          showShareIcon: true,
+          statusBarHeight: MediaQuery.of(context).padding.top,
+          controller: _searchTextController,
+          cancelSearch: () {
+            BlocProvider.of<ListingTabBloc>(context).add(ListingTabCancelSearching());
+            if (_oldSearchText != _searchTextController.text) {
+              _oldSearchText = _searchTextController.text;
+              _refreshIndicatorKey.currentState.show();
+            }
+          },
+          searchText: (searchKey) {
+            if (_oldSearchText != _searchTextController.text) {
+              _oldSearchText = _searchTextController.text;
+              _refreshIndicatorKey.currentState.show();
+            }
+          },
         );
         final height = constraint.maxHeight;
 
-        return Scaffold(
-            appBar: appBar,
-            body: Container(
-              color: Theme.of(context).backgroundColor,
-              height: height,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  BlocBuilder<ListingTabBloc, ListingTabState>(condition: (previousState, state) {
-                    if (state is ListingTabInitial || state is ListingTabGetDataSuccess) return true;
-                    return false;
-                  }, builder: (ctx, state) {
-                    return state is ListingTabGetDataSuccess
-                        ? MainFilter(S.of(context).common_count_deal(state.totalItems), false, 0)
-                        : MainFilter(S.of(context).common_three_dot, false, 0);
-                  }),
-                  Container(
-                    height: height - appBar.preferredSize.height - 36,
-                    margin: EdgeInsets.only(left: Dimen.spacingNormal, right: Dimen.spacingNormal),
-                    child: RefreshIndicator(
-                      key: _refreshIndicatorKey,
-                      color: Theme.of(context).primaryColor,
-                      onRefresh: _getListingData,
-                      child: ListingListViewWidget(),
+        return BlocBuilder<ListingTabBloc, ListingTabState>(condition: (previousState, state) {
+          if (state is ListingTabInitial || state is ListingTabSearchingBegin || state is ListingTabSearchingEnd) return true;
+          return false;
+        }, builder: (ctx, state) {
+          return Scaffold(
+              appBar: state is ListingTabSearchingBegin ? appSearchBar : appBar,
+              body: Container(
+                color: Theme.of(context).backgroundColor,
+                height: height,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    BlocBuilder<ListingTabBloc, ListingTabState>(condition: (previousState, state) {
+                      if (state is ListingTabInitial || state is ListingTabGetDataSuccess) return true;
+                      return false;
+                    }, builder: (ctx, state) {
+                      return state is ListingTabGetDataSuccess
+                          ? MainFilter(S.of(context).common_count_deal(state.totalItems), false, 0)
+                          : MainFilter(S.of(context).common_three_dot, false, 0);
+                    }),
+                    Container(
+                      height: height - appBar.preferredSize.height - 36,
+                      margin: EdgeInsets.only(left: Dimen.spacingNormal, right: Dimen.spacingNormal),
+                      child: RefreshIndicator(
+                        key: _refreshIndicatorKey,
+                        color: Theme.of(context).primaryColor,
+                        onRefresh: _getListingData,
+                        child: ListingListViewWidget(),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ));
+                  ],
+                ),
+              ));
+        });
       }),
     );
   }
