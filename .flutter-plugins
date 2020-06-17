@@ -1,3 +1,6 @@
 # This is a generated file; do not edit or check into version control.
 flutter_secure_storage=/Users/ThienKhoa/.pub-cache/hosted/pub.dartlang.org/flutter_secure_storage-3.3.3/
 fluttertoast=/Users/ThienKhoa/.pub-cache/hosted/pub.dartlang.org/fluttertoast-4.0.1/
+path_provider=/Users/ThienKhoa/.pub-cache/hosted/pub.dartlang.org/path_provider-1.6.10/
+path_provider_linux=/Users/ThienKhoa/.pub-cache/hosted/pub.dartlang.org/path_provider_linux-0.0.1+1/
+path_provider_macos=/Users/ThienKhoa/.pub-cache/hosted/pub.dartlang.org/path_provider_macos-0.0.4+3/

@@ -74,7 +74,7 @@ class _DealTabScreenState extends State<DealTabScreen> {
           final appBar = CommonAppBar(
             S.of(context).deal_screen_title,
             showSearchIcon: true,
-            showShareIcon: true,
+            showShareIcon: false,
             statusBarHeight: MediaQuery.of(context).padding.top,
             searchEvent: () {
               BlocProvider.of<TabDealBloc>(context).add(DealStartSearch());
@@ -84,7 +84,7 @@ class _DealTabScreenState extends State<DealTabScreen> {
           final appSearchBar = CommonSearchAppBar(
             S.of(context).deal_screen_title,
             showSearchIcon: true,
-            showShareIcon: true,
+            showShareIcon: false,
             statusBarHeight: MediaQuery.of(context).padding.top,
             controller: _controller,
             cancelSearch: () {

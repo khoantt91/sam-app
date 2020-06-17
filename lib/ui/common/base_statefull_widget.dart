@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-abstract class BaseStateFulWidget extends StatefulWidget {}
+abstract class BaseStateFulWidget extends StatefulWidget {
+  BaseStateFulWidget({Key key}) : super(key: key);
+}
 
 abstract class BaseState<B extends BaseStateFulWidget> extends State<B> {
-  BuildContext context;
-
   /// should be overridden in extended widget
   Widget getLayout();
 
   @override
   Widget build(BuildContext context) {
-    this.context = context;
     return getLayout();
   }
 

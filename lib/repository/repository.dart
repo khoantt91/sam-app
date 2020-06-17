@@ -1,6 +1,7 @@
 import 'package:samapp/model/constant.dart';
 import 'package:samapp/model/deal.dart';
 import 'package:samapp/model/listing.dart';
+import 'package:samapp/repository/local/common_storage/common_storage_manager.dart';
 import 'package:samapp/repository/local/secure_storage/secure_storage_constant.dart';
 import 'package:samapp/repository/local/secure_storage/secure_storage_manager.dart';
 import 'package:samapp/repository/network/network_api.dart';
@@ -13,6 +14,7 @@ import 'network/model/network_result_paging.dart';
 class Repository implements RepositoryImp {
   NetworkImp _networkApi;
   SecureStorageManagerImp _secureStorageManager;
+  CommonStorageManagerImp _commonStorageManager;
   String _token;
   String _fbToken;
 
@@ -29,6 +31,7 @@ class Repository implements RepositoryImp {
   Repository() {
     _networkApi = NetworkAPI();
     _secureStorageManager = SecureStorageManager();
+    _commonStorageManager = CommonStorageManager();
   }
 
   @override
@@ -37,11 +40,15 @@ class Repository implements RepositoryImp {
   @override
   Future<NetworkResult<User, NetworkError>> login(String userName, String password, String fbToken, String os) async {
     final result = await _networkApi.login(userName, password, fbToken, os);
-    /* Store user token in SecureStorage when user sign in successfully */
+    /* 1. Store user token in SecureStorage
+    *  2. Store user info in CommonStorage
+    *  when user sign in successfully
+    * */
     if (result.success != null) {
       final token = result.success.token;
       await _secureStorageManager.write(SecureStorageConstant.ACCESS_TOKEN, token);
-      Log.i('Store access token successfully');
+      await _commonStorageManager.storeCurrentUser(result.success);
+      Log.i('Store user & access token successfully');
     }
     return Future.value(result);
   }
@@ -60,6 +67,16 @@ class Repository implements RepositoryImp {
     }
 
     return Future.value(result);
+  }
+
+  @override
+  Future<NetworkResult<User, NetworkError>> getCurrentUser() async {
+    try {
+      final user = await _commonStorageManager.getCurrentUser();
+      return NetworkResult(user, null);
+    } on Exception catch (ex) {
+      return NetworkResult(null, NetworkError(code: '-1', message: ex.toString()));
+    }
   }
 
   @override
@@ -118,6 +135,11 @@ abstract class RepositoryImp {
 
   //endregion
 
+  //region User
+  Future<NetworkResult<User, NetworkError>> getCurrentUser();
+
+  //endregion
+
   //region Deal
   Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals({
     int fromDate,
@@ -130,7 +152,7 @@ abstract class RepositoryImp {
     String textSearch,
   });
 
-//endregion
+  //endregion
 
   //region Listing
   Future<NetworkResult<NetworkResultPaging<Listing>, NetworkError>> getListings({
@@ -141,5 +163,5 @@ abstract class RepositoryImp {
     int numberItem,
     String textSearch,
   });
-  //endregion
+//endregion
 }
