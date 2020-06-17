@@ -116,7 +116,7 @@ class TabDealBloc extends Bloc<TabDealEvent, TabDealState> {
   Stream<TabDealState> _handleGetMoreData(GetMoreData event) async* {
     if (_isLoading) return;
     _currentPage++;
-    if (_currentPage > _totalPage) return;
+    if (_currentPage >= _totalPage) return;
 
     _isLoading = true;
     yield DataLoadingMore();

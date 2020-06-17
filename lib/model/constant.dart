@@ -152,6 +152,25 @@ extension DealScorecardTypesExtention on DealScorecardTypes {
         return Color(0xFFfc4040);
     }
   }
+
+  DealScorecardTypes getDealScorecardTypeFromStringId(String id) {
+    switch (id) {
+      case 'H2':
+        return DealScorecardTypes.HIGH_2;
+      case 'H1':
+        return DealScorecardTypes.HIGH_1;
+      case 'M2':
+        return DealScorecardTypes.MEDIUM_2;
+      case 'M1':
+        return DealScorecardTypes.MEDIUM_1;
+      case 'L1':
+        return DealScorecardTypes.LOW_1;
+      case 'L0':
+        return DealScorecardTypes.LOW_0;
+      default:
+        return DealScorecardTypes.LOW_0;
+    }
+  }
 }
 
 /* ENUM: DealStatus */

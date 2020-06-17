@@ -85,7 +85,10 @@ class ListingTabBloc extends Bloc<ListingTabEvent, ListingTabState> {
 
   Stream<ListingTabState> _handleGetMoreData(ListingTabGetMoreData event) async* {
     _currentPage++;
-    if (_currentPage > _totalPage) return;
+    if (_currentPage >= _totalPage) {
+      Log.i('LOAD DONE => REACHED MAX LIST');
+      return;
+    }
 
     final result = await _repository.getListings(
         listingScorecardTypes: _scorecardTypes,

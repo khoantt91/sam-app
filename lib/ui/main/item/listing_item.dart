@@ -167,25 +167,7 @@ class ListingItem extends StatelessWidget {
                         Expanded(
                           flex: 1,
                           child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  DealScorecardTypeWidget(_listing, DealScorecardTypes.HIGH_2),
-                                  DealScorecardTypeWidget(_listing, DealScorecardTypes.HIGH_1),
-                                  DealScorecardTypeWidget(_listing, DealScorecardTypes.MEDIUM_2),
-                                  DealScorecardTypeWidget(_listing, DealScorecardTypes.MEDIUM_1),
-                                ],
-                              ),
-                              SizedBox(
-                                height: Dimen.spacingSuperTiny,
-                              ),
-                              Row(
-                                children: [
-                                  DealScorecardTypeWidget(_listing, DealScorecardTypes.LOW_1),
-                                  DealScorecardTypeWidget(_listing, DealScorecardTypes.LOW_0),
-                                ],
-                              )
-                            ],
+                            children: _buildDealScorecardTypeWidgets(context),
                           ),
                         ),
                         LeftIconTextWidget(_listing.tour.toString(), Dimen.spacingSuperTiny, 'assets/images/ic_car.png'),
@@ -216,21 +198,27 @@ class ListingItem extends StatelessWidget {
         ));
   }
 
-  Container buildScorecardTypeWidget(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(right: Dimen.spacingSuperTiny),
-      decoration: BoxDecoration(
-        color: AppColor.primaryColor,
-        borderRadius: BorderRadius.circular(4),
-      ),
-      padding: EdgeInsets.only(left: Dimen.spacingTiny, right: Dimen.spacingTiny, top: 2, bottom: 2),
-      child: Text(
-        '30H',
-        style: Theme.of(context).textTheme.bodyText2.copyWith(
-              fontSize: Dimen.fontTiny,
-              color: Colors.white,
-            ),
-      ),
-    );
+  List<Widget> _buildDealScorecardTypeWidgets(BuildContext context) {
+    final List<Widget> firstRow = [];
+    final List<Widget> secondRow = [];
+    _listing.dealClassify.forEach((key, value) {
+      if (value != null && value > 0 && firstRow.length < 4) {
+        firstRow.add(DealScorecardTypeWidget(_listing, DealScorecardTypes.LOW_0.getDealScorecardTypeFromStringId(key)));
+      } else {
+        secondRow.add(DealScorecardTypeWidget(_listing, DealScorecardTypes.LOW_0.getDealScorecardTypeFromStringId(key)));
+      }
+    });
+
+    return secondRow.length > 0
+        ?
+        /* Return 2 row */
+        [
+            Row(children: firstRow),
+            SizedBox(height: Dimen.spacingSuperTiny),
+            Row(children: secondRow),
+          ]
+        :
+        /* Return 1 row */
+        [Row(children: firstRow)];
   }
 }
