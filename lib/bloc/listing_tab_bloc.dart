@@ -30,6 +30,7 @@ class ListingTabBloc extends Bloc<ListingTabEvent, ListingTabState> {
   int _currentPage = 0;
   int _totalPage = 0;
   int _totalItemInPage = 20;
+
   //endregion
 
   @override
@@ -78,7 +79,7 @@ class ListingTabBloc extends Bloc<ListingTabEvent, ListingTabState> {
       _listings.replaceAll(result.success.list);
       _totalItems = result.success.totalItems;
       _totalPage = result.success.totalItems;
-      yield ListingTabGetDataSuccess(_listings, _listings.length >= _totalItems, _totalItems);
+      yield ListingTabGetDataSuccess(List.from(_listings), _listings.length >= _totalItems, _totalItems);
     }
   }
 
@@ -106,7 +107,7 @@ class ListingTabBloc extends Bloc<ListingTabEvent, ListingTabState> {
       _totalPage = result.success.totalPages;
       _listings.addAll(result.success.list);
       _totalItems = result.success.totalItems;
-      yield ListingTabGetDataSuccess(_listings, _listings.length >= _totalItems, _totalItems);
+      yield ListingTabGetDataSuccess(List.from(_listings), _listings.length >= _totalItems, _totalItems);
     }
   }
 }

@@ -11,6 +11,7 @@ import 'package:samapp/ui/widget/common_app_bar.dart';
 import 'package:samapp/ui/widget/listing_listview_widget.dart';
 import 'package:samapp/ui/widget/main_filter.dart';
 import 'package:samapp/utils/constant/dimen.dart';
+import 'package:samapp/utils/log/log.dart';
 
 class ListingTabScreen extends BaseStateFulWidget {
   ListingTabScreen({Key key});
@@ -85,7 +86,14 @@ class _ListingTabScreenState extends BaseState<ListingTabScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  MainFilter(S.of(context).common_three_dot, false, 0),
+                  BlocBuilder<ListingTabBloc, ListingTabState>(condition: (previousState, state) {
+                    if (state is ListingTabInitial || state is ListingTabGetDataSuccess) return true;
+                    return false;
+                  }, builder: (ctx, state) {
+                    return state is ListingTabGetDataSuccess
+                        ? MainFilter(S.of(context).common_count_deal(state.totalItems), false, 0)
+                        : MainFilter(S.of(context).common_three_dot, false, 0);
+                  }),
                   Container(
                     height: height - appBar.preferredSize.height - 36,
                     margin: EdgeInsets.only(left: Dimen.spacingNormal, right: Dimen.spacingNormal),

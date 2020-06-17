@@ -27,7 +27,7 @@ class ListingTabGetDataSuccess extends ListingTabState {
   const ListingTabGetDataSuccess(this.listings, this.hasReachedMax, this.totalItems);
 
   @override
-  List<Object> get props => [this.listings, this.hasReachedMax, this.totalItems];
+  List<Object> get props => [listings, hasReachedMax, totalItems];
 }
 
 class ListingTabGetDataFailure extends ListingTabState {
