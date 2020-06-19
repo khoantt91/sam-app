@@ -1,8 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:samapp/model/user.dart';
 import 'package:samapp/repository/local/common_storage/common_storage_constant.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
+import 'package:path/path.dart' as path;
 
 class CommonStorageManager implements CommonStorageManagerImp {
   DatabaseFactory _dbFactory = databaseFactoryIo;
@@ -19,7 +21,7 @@ class CommonStorageManager implements CommonStorageManagerImp {
   Future<Database> _openDatabase() async {
     var dir = await getApplicationDocumentsDirectory();
     await dir.create(recursive: true);
-    var dbPath = dir.path + 'my_database.db';
+    var dbPath = path.join(dir.path, 'my_database.db');
     return await _dbFactory.openDatabase(dbPath);
   }
 
