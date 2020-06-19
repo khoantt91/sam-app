@@ -56,6 +56,9 @@ class ListingTabBloc extends Bloc<ListingTabEvent, ListingTabState> {
     if (event.rangeData != null) _rangeData.replaceAll(event.rangeData);
     if (event.keySearch != null) _keySearch = event.keySearch;
 
+    Log.w('Hello');
+    print('Hellobuffer(window)');
+
     _currentPage = 1;
     yield ListingTabGetDataInProgress();
 

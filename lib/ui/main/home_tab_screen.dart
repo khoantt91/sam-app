@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:samapp/model/constant.dart';
 import 'package:samapp/repository/repository.dart';
 import 'package:samapp/ui/common/base_statefull_widget.dart';
 import 'package:samapp/ui/onboarding/splash_screen.dart';
@@ -98,139 +99,336 @@ class _HomeTabScreen extends BaseState<HomeTabScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        /* Overview View */
                         Container(
                             margin: EdgeInsets.only(left: Dimen.spacingSmall, top: Dimen.spacingNormal, bottom: Dimen.spacingTiny),
                             child: Text(
                               'Tổng quan',
                               style: Theme.of(context).textTheme.bodyText1,
                             )),
-                        _buildPorfolioStatistic(constraint),
+                        _buildPortfolioStatistic(constraint),
+
+                        /* KPI (Month to date) */
                         Container(
                             margin: EdgeInsets.only(left: Dimen.spacingSmall, top: Dimen.spacingNormal, bottom: Dimen.spacingTiny),
                             child: Text(
                               'KPI (Month to date)',
                               style: Theme.of(context).textTheme.bodyText1,
                             )),
+                        _buildKPIMonthToDateWidget(constraint),
+
+                        /* Statistic */
+                        Container(
+                            margin: EdgeInsets.only(left: Dimen.spacingSmall, top: Dimen.spacingNormal, bottom: Dimen.spacingTiny),
+                            child: Text(
+                              'Thống kê',
+                              style: Theme.of(context).textTheme.bodyText1,
+                            )),
                         Container(
                           margin: EdgeInsets.only(
                             left: Dimen.spacingSmall,
                             right: Dimen.spacingSmall,
+                            bottom: Dimen.spacingNormal
                           ),
                           width: constraint.maxWidth - (Dimen.spacingSmall * 2),
                           child: Card(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: Dimen.spacingSmall,
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 1,
-                                      child: Container(
-                                        margin: EdgeInsets.only(left: Dimen.spacingSmall),
-                                        child: Text('Số live listing hiện tại'),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              child: Table(
+                                children: [
+                                  TableRow(children: [
+                                    Container(
+                                      margin: EdgeInsets.only(top: Dimen.spacingSmall, bottom: Dimen.spacingSmall),
+                                      child: Text(
+                                        'Loại / Ngày',
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context).textTheme.bodyText2.copyWith(fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                     Container(
-                                      margin: EdgeInsets.only(right: Dimen.spacingSmall),
+                                      margin: EdgeInsets.only(top: Dimen.spacingSmall, bottom: Dimen.spacingSmall),
                                       child: Text(
-                                        '10/50',
-                                        style: TextStyle(fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                    left: Dimen.spacingSmall,
-                                    right: Dimen.spacingSmall,
-                                    top: Dimen.spacingSuperTiny,
-                                  ),
-                                  child: LinearPercentIndicator(
-                                    lineHeight: 12.0,
-                                    percent: 0.8,
-                                    backgroundColor: Color(0xFFEEEEEE),
-                                    progressColor: AppColor.colorKellyGreen,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: Dimen.spacingSmall,
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 1,
-                                      child: Container(
-                                        margin: EdgeInsets.only(left: Dimen.spacingSmall),
-                                        child: Text('Số live listing hiện tại'),
+                                        '<30',
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context).textTheme.bodyText2.copyWith(fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                     Container(
-                                      margin: EdgeInsets.only(right: Dimen.spacingSmall),
+                                      margin: EdgeInsets.only(top: Dimen.spacingSmall, bottom: Dimen.spacingSmall),
                                       child: Text(
-                                        '10/50',
-                                        style: TextStyle(fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                    left: Dimen.spacingSmall,
-                                    right: Dimen.spacingSmall,
-                                    top: Dimen.spacingSuperTiny,
-                                  ),
-                                  child: LinearPercentIndicator(
-                                    lineHeight: 12.0,
-                                    percent: 0.3,
-                                    backgroundColor: Color(0xFFEEEEEE),
-                                    progressColor: AppColor.primaryColor,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: Dimen.spacingSmall,
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 1,
-                                      child: Container(
-                                        margin: EdgeInsets.only(left: Dimen.spacingSmall),
-                                        child: Text('Số live listing hiện tại'),
+                                        '30-60',
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context).textTheme.bodyText2.copyWith(fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                     Container(
-                                      margin: EdgeInsets.only(right: Dimen.spacingSmall),
+                                      margin: EdgeInsets.only(top: Dimen.spacingSmall, bottom: Dimen.spacingSmall),
                                       child: Text(
-                                        '10/50',
-                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                        '>60',
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context).textTheme.bodyText2.copyWith(fontWeight: FontWeight.bold),
                                       ),
                                     ),
-                                  ],
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                    left: Dimen.spacingSmall,
-                                    right: Dimen.spacingSmall,
-                                    top: Dimen.spacingSuperTiny,
-                                  ),
-                                  child: LinearPercentIndicator(
-                                    lineHeight: 12.0,
-                                    percent: 0.2,
-                                    backgroundColor: Color(0xFFEEEEEE),
-                                    progressColor: Colors.red,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: Dimen.spacingSmall,
-                                ),
-                                Icon(Icons.arrow_drop_down),
-                              ],
-                            ),
-                          ),
-                        )
+                                  ]),
+                                  TableRow(children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            color: ListingScorecardTypes.HIGH.colorBg,
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          margin: EdgeInsets.only(
+                                            top: Dimen.spacingTiny,
+                                            bottom: Dimen.spacingTiny,
+                                          ),
+                                          padding: EdgeInsets.only(left: Dimen.spacingNormal, right: Dimen.spacingNormal, top: 2, bottom: 2),
+                                          child: Text(
+                                            'H',
+                                            style: Theme.of(context).textTheme.bodyText2.copyWith(color: Colors.white),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                        top: Dimen.spacingTiny,
+                                        bottom: Dimen.spacingTiny,
+                                      ),
+                                      child: Text(
+                                        '...',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                        top: Dimen.spacingTiny,
+                                        bottom: Dimen.spacingTiny,
+                                      ),
+                                      child: Text(
+                                        '...',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                        top: Dimen.spacingTiny,
+                                        bottom: Dimen.spacingTiny,
+                                      ),
+                                      child: Text(
+                                        '...',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ]),
+                                  TableRow(children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            color: ListingScorecardTypes.MEDIUM.colorBg,
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          margin: EdgeInsets.only(
+                                            top: Dimen.spacingTiny,
+                                            bottom: Dimen.spacingTiny,
+                                          ),
+                                          padding: EdgeInsets.only(left: Dimen.spacingNormal, right: Dimen.spacingNormal, top: 2, bottom: 2),
+                                          child: Text(
+                                            'M',
+                                            style: Theme.of(context).textTheme.bodyText2.copyWith(color: Colors.white),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Text(
+                                      '...',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Text(
+                                      '...',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Text(
+                                      '...',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ]),
+                                  TableRow(children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            color: ListingScorecardTypes.LOW.colorBg,
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          margin: EdgeInsets.only(
+                                            top: Dimen.spacingTiny,
+                                            bottom: Dimen.spacingTiny,
+                                          ),
+                                          padding: EdgeInsets.only(left: Dimen.spacingNormal, right: Dimen.spacingNormal, top: 2, bottom: 2),
+                                          child: Text(
+                                            'L',
+                                            style: Theme.of(context).textTheme.bodyText2.copyWith(color: Colors.white),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Text(
+                                      '...',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Text(
+                                      '...',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Text(
+                                      '...',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ]),
+                                  TableRow(children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            color: ListingScorecardTypes.UNCLASSIFIED.colorBg,
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          margin: EdgeInsets.only(
+                                            top: Dimen.spacingTiny,
+                                            bottom: Dimen.spacingTiny,
+                                          ),
+                                          padding: EdgeInsets.only(left: Dimen.spacingNormal, right: Dimen.spacingNormal, top: 2, bottom: 2),
+                                          child: Text(
+                                            'U',
+                                            style: Theme.of(context).textTheme.bodyText2.copyWith(color: Colors.white),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Text(
+                                      '...',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Text(
+                                      '...',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Text(
+                                      '...',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ]),
+                                ],
+                              )
+
+//                            Row(
+//                              children: [
+//                                Expanded(
+//                                  flex: 1,
+//                                  child: Column(
+//                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                                    children: [
+//                                      Text('Loại / Ngày'),
+//                                      Container(
+//                                        margin: EdgeInsets.only(right: Dimen.spacingSuperTiny),
+//                                        decoration: BoxDecoration(
+//                                          color: ListingScorecardTypes.HIGH.colorBg,
+//
+//                                          borderRadius: BorderRadius.circular(4),
+//                                        ),
+//                                        padding: EdgeInsets.only(left: Dimen.spacingTiny, right: Dimen.spacingTiny, top: 2, bottom: 2),
+//                                        child: Text(
+//                                          'H',
+//                                          style: Theme.of(context).textTheme.bodyText2.copyWith(color: Colors.white),
+//                                        ),
+//                                      ),
+//                                      Container(
+//                                        margin: EdgeInsets.only(right: Dimen.spacingSuperTiny),
+//                                        decoration: BoxDecoration(
+//                                          color: ListingScorecardTypes.MEDIUM.colorBg,
+//                                          borderRadius: BorderRadius.circular(4),
+//                                        ),
+//                                        padding: EdgeInsets.only(left: Dimen.spacingTiny, right: Dimen.spacingTiny, top: 2, bottom: 2),
+//                                        child: Text(
+//                                          'M',
+//                                          style: Theme.of(context).textTheme.bodyText2.copyWith(color: Colors.white),
+//                                        ),
+//                                      ),
+//                                      Container(
+//                                        margin: EdgeInsets.only(right: Dimen.spacingSuperTiny),
+//                                        decoration: BoxDecoration(
+//                                          color: ListingScorecardTypes.LOW.colorBg,
+//                                          borderRadius: BorderRadius.circular(4),
+//                                        ),
+//                                        padding: EdgeInsets.only(left: Dimen.spacingTiny, right: Dimen.spacingTiny, top: 2, bottom: 2),
+//                                        child: Text(
+//                                          'L',
+//                                          style: Theme.of(context).textTheme.bodyText2.copyWith(color: Colors.white),
+//                                        ),
+//                                      ),
+//                                      Container(
+//                                        margin: EdgeInsets.only(right: Dimen.spacingSuperTiny),
+//                                        decoration: BoxDecoration(
+//                                          color: ListingScorecardTypes.UNCLASSIFIED.colorBg,
+//                                          borderRadius: BorderRadius.circular(4),
+//                                        ),
+//                                        padding: EdgeInsets.only(left: Dimen.spacingTiny, right: Dimen.spacingTiny, top: 2, bottom: 2),
+//                                        child: Text(
+//                                          'U',
+//                                          style: Theme.of(context).textTheme.bodyText2.copyWith(color: Colors.white),
+//                                        ),
+//                                      ),
+//                                    ],
+//                                  ),
+//                                ),
+//                                Expanded(
+//                                  flex: 1,
+//                                  child:
+//                                  Column(
+//                                    mainAxisAlignment: MainAxisAlignment.start,
+//                                    children: [
+//                                      Text('<30'),
+//                                      Text("..."),
+//                                      Text("..."),
+//                                      Text("..."),
+//                                    ],
+//                                  ),
+//                                ),
+//                                Expanded(
+//                                  flex: 1,
+//                                  child: Column(
+//                                    children: [
+//                                      Text('30 - 60'),
+//                                      Text("..."),
+//                                      Text("..."),
+//                                      Text("..."),
+//                                    ],
+//                                  ),
+//                                ),
+//                                Expanded(
+//                                  flex: 1,
+//                                  child: Column(
+//                                    children: [
+//                                      Text('> 60'),
+//                                      Text("..."),
+//                                      Text("..."),
+//                                      Text("..."),
+//                                    ],
+//                                  ),
+//                                ),
+//                              ],
+//                            ),
+                              ),
+                        ),
                       ],
                     ),
                   ),
@@ -243,7 +441,130 @@ class _HomeTabScreen extends BaseState<HomeTabScreen> {
     );
   }
 
-  Container _buildPorfolioStatistic(BoxConstraints constraint) {
+  Container _buildKPIMonthToDateWidget(BoxConstraints constraint) {
+    return Container(
+      margin: EdgeInsets.only(
+        left: Dimen.spacingSmall,
+        right: Dimen.spacingSmall,
+      ),
+      width: constraint.maxWidth - (Dimen.spacingSmall * 2),
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Column(
+          children: [
+            SizedBox(
+              height: Dimen.spacingSmall,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    margin: EdgeInsets.only(left: Dimen.spacingSmall),
+                    child: Text('Số live listing hiện tại'),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(right: Dimen.spacingSmall),
+                  child: Text(
+                    '10/50',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              margin: EdgeInsets.only(
+                left: Dimen.spacingSmall,
+                right: Dimen.spacingSmall,
+                top: Dimen.spacingSuperTiny,
+              ),
+              child: LinearPercentIndicator(
+                lineHeight: 12.0,
+                percent: 0.8,
+                backgroundColor: Color(0xFFEEEEEE),
+                progressColor: AppColor.colorKellyGreen,
+              ),
+            ),
+            SizedBox(
+              height: Dimen.spacingSmall,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    margin: EdgeInsets.only(left: Dimen.spacingSmall),
+                    child: Text('Số live listing hiện tại'),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(right: Dimen.spacingSmall),
+                  child: Text(
+                    '10/50',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              margin: EdgeInsets.only(
+                left: Dimen.spacingSmall,
+                right: Dimen.spacingSmall,
+                top: Dimen.spacingSuperTiny,
+              ),
+              child: LinearPercentIndicator(
+                lineHeight: 12.0,
+                percent: 0.3,
+                backgroundColor: Color(0xFFEEEEEE),
+                progressColor: AppColor.primaryColor,
+              ),
+            ),
+            SizedBox(
+              height: Dimen.spacingSmall,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    margin: EdgeInsets.only(left: Dimen.spacingSmall),
+                    child: Text('Số live listing hiện tại'),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(right: Dimen.spacingSmall),
+                  child: Text(
+                    '10/50',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              margin: EdgeInsets.only(
+                left: Dimen.spacingSmall,
+                right: Dimen.spacingSmall,
+                top: Dimen.spacingSuperTiny,
+              ),
+              child: LinearPercentIndicator(
+                lineHeight: 12.0,
+                percent: 0.2,
+                backgroundColor: Color(0xFFEEEEEE),
+                progressColor: Colors.red,
+              ),
+            ),
+            SizedBox(
+              height: Dimen.spacingSmall,
+            ),
+            Icon(Icons.arrow_drop_down),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Container _buildPortfolioStatistic(BoxConstraints constraint) {
     return Container(
       width: constraint.maxWidth - (Dimen.spacingSmall * 2),
       margin: EdgeInsets.only(left: Dimen.spacingSmall, right: Dimen.spacingSmall),
