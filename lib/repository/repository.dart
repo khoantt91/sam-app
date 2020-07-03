@@ -1,3 +1,4 @@
+import 'package:samapp/model/app_error.dart';
 import 'package:samapp/model/constant.dart';
 import 'package:samapp/model/deal.dart';
 import 'package:samapp/model/listing.dart';
@@ -5,12 +6,11 @@ import 'package:samapp/repository/firebase/firebase_storage_manager.dart';
 import 'package:samapp/repository/local/common_storage/common_storage_manager.dart';
 import 'package:samapp/repository/local/secure_storage/secure_storage_constant.dart';
 import 'package:samapp/repository/local/secure_storage/secure_storage_manager.dart';
+import 'package:samapp/repository/model/repository_result.dart';
+import 'package:samapp/repository/model/repository_result_paging.dart';
 import 'package:samapp/repository/network/network_api.dart';
 import 'package:samapp/utils/log/log.dart';
 import '../model/user.dart';
-import 'network/model/network_error.dart';
-import 'network/model/network_result.dart';
-import 'network/model/network_result_paging.dart';
 
 class Repository implements RepositoryImp {
   NetworkImp _networkApi;
@@ -42,7 +42,7 @@ class Repository implements RepositoryImp {
   Future<String> checkToken() => _getToken();
 
   @override
-  Future<NetworkResult<User, NetworkError>> login(String userName, String password, String fbToken, String os) async {
+  Future<RepositoryResult<User, AppError>> login(String userName, String password, String fbToken, String os) async {
     final result = await _networkApi.login(userName, password, fbToken, os);
     /* 1. Store user token in SecureStorage
     *  2. Store user info in CommonStorage
@@ -60,7 +60,7 @@ class Repository implements RepositoryImp {
   }
 
   @override
-  Future<NetworkResult<Map<String, dynamic>, NetworkError>> logout(String os) async {
+  Future<RepositoryResult<Map<String, dynamic>, AppError>> logout(String os) async {
     final fbToken = await _getFirebaseToken();
     final token = await _getToken();
     final result = await _networkApi.logout(token, fbToken, os);
@@ -76,17 +76,17 @@ class Repository implements RepositoryImp {
   }
 
   @override
-  Future<NetworkResult<User, NetworkError>> getCurrentUser() async {
+  Future<RepositoryResult<User, AppError>> getCurrentUser() async {
     try {
       final user = await _commonStorageManager.getCurrentUser();
-      return NetworkResult(user, null);
+      return RepositoryResult(user, null);
     } on Exception catch (ex) {
-      return NetworkResult(null, NetworkError(code: '-1', message: ex.toString()));
+      return RepositoryResult(null, AppError(code: '-1', message: ex.toString()));
     }
   }
 
   @override
-  Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals({
+  Future<RepositoryResult<RepositoryResultPaging<Deal>, AppError>> getDeals({
     int fromDate,
     int toDate,
     List<ListingTypes> listingTypes,
@@ -110,7 +110,7 @@ class Repository implements RepositoryImp {
   }
 
   @override
-  Future<NetworkResult<NetworkResultPaging<Listing>, NetworkError>> getListings({
+  Future<RepositoryResult<RepositoryResultPaging<Listing>, AppError>> getListings({
     int fromDate,
     int toDate,
     List<ListingScorecardTypes> listingScorecardTypes,
@@ -131,9 +131,8 @@ class Repository implements RepositoryImp {
   }
 
   @override
-  Future<NetworkResult<NetworkResultPaging<User>, NetworkError>> getUserChatList({User lastUser}) async {
-    final userFirebaseResponse = await _firebaseStorageManager.getAllUser(lastUser: lastUser);
-    return NetworkResult(NetworkResultPaging(userFirebaseResponse.first, userFirebaseResponse.last, null), null);
+  Future<RepositoryResult<RepositoryResultPaging<User>, AppError>> getUserChatList({User lastUser}) async {
+    return _firebaseStorageManager.getAllUser(lastUser: lastUser);
   }
 }
 
@@ -141,21 +140,21 @@ abstract class RepositoryImp {
   //region Authenticate
   Future<String> checkToken();
 
-  Future<NetworkResult<User, NetworkError>> login(String userName, String password, String fbToken, String os);
+  Future<RepositoryResult<User, AppError>> login(String userName, String password, String fbToken, String os);
 
-  Future<NetworkResult<Map<String, dynamic>, NetworkError>> logout(String os);
+  Future<RepositoryResult<Map<String, dynamic>, AppError>> logout(String os);
 
   //endregion
 
   //region User
-  Future<NetworkResult<User, NetworkError>> getCurrentUser();
+  Future<RepositoryResult<User, AppError>> getCurrentUser();
 
-  Future<NetworkResult<NetworkResultPaging<User>, NetworkError>> getUserChatList({User lastUser});
+  Future<RepositoryResult<RepositoryResultPaging<User>, AppError>> getUserChatList({User lastUser});
 
   //endregion
 
   //region Deal
-  Future<NetworkResult<NetworkResultPaging<Deal>, NetworkError>> getDeals({
+  Future<RepositoryResult<RepositoryResultPaging<Deal>, AppError>> getDeals({
     int fromDate,
     int toDate,
     List<ListingTypes> listingTypes,
@@ -169,7 +168,7 @@ abstract class RepositoryImp {
   //endregion
 
   //region Listing
-  Future<NetworkResult<NetworkResultPaging<Listing>, NetworkError>> getListings({
+  Future<RepositoryResult<RepositoryResultPaging<Listing>, AppError>> getListings({
     int fromDate,
     int toDate,
     List<ListingScorecardTypes> listingScorecardTypes,

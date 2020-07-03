@@ -1,7 +1,5 @@
-class NetworkResultPaging<T> {
-  List<T> list;
-  int totalItems;
-  int totalPages;
+import 'package:samapp/repository/model/repository_result_paging.dart';
 
-  NetworkResultPaging(this.list, this.totalItems, this.totalPages);
+class NetworkResultPaging<T> extends RepositoryResultPaging<T> {
+  NetworkResultPaging(List<T> list, int totalItems, int totalPages) : super(list, totalItems, totalPages);
 }

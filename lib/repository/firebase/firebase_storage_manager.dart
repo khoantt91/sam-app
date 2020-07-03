@@ -1,36 +1,47 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:samapp/generated/i18n.dart';
 import 'package:samapp/model/deal.dart';
 import 'package:samapp/model/listing.dart';
-import 'package:samapp/model/pair.dart';
 import 'package:samapp/model/user.dart';
 import 'package:samapp/repository/firebase/firebase_storage_constant.dart';
+import 'package:samapp/repository/firebase/model/firebase_error.dart';
+import 'package:samapp/repository/firebase/model/firebase_result.dart';
+import 'package:samapp/repository/firebase/model/firebase_result_paging.dart';
 
 class FirebaseStorageManager implements FirebaseStorageManagerImp {
   DocumentReference firebaseDb = Firestore.instance.collection(FirebaseStorageConstant.DATABASE_NAME).document(FirebaseStorageConstant.DATABASE_DEV);
 
   @override
-  Future<dynamic> insertOrUpdate(User user) async {
-    final userCollection = firebaseDb.collection(FirebaseStorageConstant.COLLECTION_USER);
-    Map<String, dynamic> jsonUser = user.toJson();
-    jsonUser['updatedAt'] = DateTime.now().millisecondsSinceEpoch;
-    return userCollection.document(user.userId.toString()).setData(jsonUser);
+  Future<FirebaseResult<dynamic, FirebaseError>> insertOrUpdate(User user) async {
+    try {
+      final userCollection = firebaseDb.collection(FirebaseStorageConstant.COLLECTION_USER);
+      Map<String, dynamic> jsonUser = user.toJson();
+      jsonUser['updatedAt'] = DateTime.now().millisecondsSinceEpoch;
+      await userCollection.document(user.userId.toString()).setData(jsonUser, merge: true);
+      return FirebaseResult(true, null);
+    } on Exception catch (ex) {
+      return FirebaseResult(null, FirebaseError(message: ex.toString()));
+    }
   }
 
   @override
-  Future<Pair<List<User>, int>> getAllUser({User lastUser}) async {
-    CollectionReference collectionReference = firebaseDb.collection(FirebaseStorageConstant.COLLECTION_USER);
+  Future<FirebaseResult<FirebaseResultPaging<User>, FirebaseError>> getAllUser({User lastUser}) async {
+    try {
+      CollectionReference collectionReference = firebaseDb.collection(FirebaseStorageConstant.COLLECTION_USER);
 
-    int totalDocuments = await _getTotalQuerySnapshot(collectionReference);
+      int totalDocuments = await _getTotalQuerySnapshot(collectionReference);
 
-    Query userCollection = collectionReference.orderBy(FirebaseStorageConstant.FIELD_USER_ID);
-    if (lastUser != null) {
-      userCollection = userCollection.startAfter([lastUser.userId]);
+      Query userCollection = collectionReference.orderBy(FirebaseStorageConstant.FIELD_USER_ID);
+      if (lastUser != null) {
+        userCollection = userCollection.startAfter([lastUser.userId]);
+      }
+      userCollection = userCollection.limit(FirebaseStorageConstant.LIMIT_QUERY);
+      final querySnapshot = await userCollection.getDocuments();
+      List<User> userList = querySnapshot.documents.map((documentSnapshot) => parseDataSnapshot<User>(documentSnapshot.data));
+
+      return FirebaseResult(FirebaseResultPaging<User>(userList, totalDocuments, null), null);
+    } on Exception catch (ex) {
+      return FirebaseResult(null, FirebaseError(message: ex.toString()));
     }
-    userCollection = userCollection.limit(FirebaseStorageConstant.LIMIT_QUERY);
-    final querySnapshot = await userCollection.getDocuments();
-    List<User> userList = querySnapshot.documents.map((documentSnapshot) => parseDataSnapshot<User>(documentSnapshot.data));
-    return Pair(userList, totalDocuments);
   }
 
   //region Private Support Methods
@@ -68,10 +79,7 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
 }
 
 abstract class FirebaseStorageManagerImp {
-  Future<dynamic> insertOrUpdate(User user);
+  Future<FirebaseResult<dynamic, FirebaseError>> insertOrUpdate(User user);
 
-  /// *
-  /// First: current item list
-  /// Second: total item in FireStore
-  Future<Pair<List<User>, int>> getAllUser({User lastUser});
+  Future<FirebaseResult<FirebaseResultPaging<User>, FirebaseError>> getAllUser({User lastUser});
 }
