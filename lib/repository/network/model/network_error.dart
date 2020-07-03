@@ -1,9 +1,8 @@
-class NetworkError {
-  String code;
-  String message;
+import 'package:samapp/model/app_error.dart';
 
-  NetworkError({this.code, this.message});
+class NetworkError extends AppError {
+  NetworkError({String code, String message}) : super(code: code, message: message);
 
-  static const ERROR_CODE_UNKNOWN = '-1000';
-  static const ERROR_CODE_PARSING = '-999';
+  static const ERROR_NETWORK_CODE_UNKNOWN = '-1000';
+  static const ERROR_NETWORK_CODE_PARSING = '-999';
 }

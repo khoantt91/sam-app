@@ -1,6 +1,7 @@
 import 'package:samapp/model/constant.dart';
 import 'package:samapp/model/deal.dart';
 import 'package:samapp/model/listing.dart';
+import 'package:samapp/repository/firebase/firebase_storage_manager.dart';
 import 'package:samapp/repository/local/common_storage/common_storage_manager.dart';
 import 'package:samapp/repository/local/secure_storage/secure_storage_constant.dart';
 import 'package:samapp/repository/local/secure_storage/secure_storage_manager.dart';
@@ -13,8 +14,10 @@ import 'network/model/network_result_paging.dart';
 
 class Repository implements RepositoryImp {
   NetworkImp _networkApi;
+  FirebaseStorageManagerImp _firebaseStorageManager;
   SecureStorageManagerImp _secureStorageManager;
   CommonStorageManagerImp _commonStorageManager;
+
   String _token;
   String _fbToken;
 
@@ -30,6 +33,7 @@ class Repository implements RepositoryImp {
 
   Repository() {
     _networkApi = NetworkAPI();
+    _firebaseStorageManager = FirebaseStorageManager();
     _secureStorageManager = SecureStorageManager();
     _commonStorageManager = CommonStorageManager();
   }
@@ -42,13 +46,15 @@ class Repository implements RepositoryImp {
     final result = await _networkApi.login(userName, password, fbToken, os);
     /* 1. Store user token in SecureStorage
     *  2. Store user info in CommonStorage
+    *  3. Store user info in FireStore
     *  when user sign in successfully
     * */
     if (result.success != null) {
       final token = result.success.token;
       await _secureStorageManager.write(SecureStorageConstant.ACCESS_TOKEN, token);
       await _commonStorageManager.storeCurrentUser(result.success);
-      Log.i('Store user & access token successfully');
+      await _firebaseStorageManager.insertOrUpdate(result.success);
+      Log.i('\n- Store user & access token successfully\n- Store user info into FireStore successfully\n- UserId=${result.success.userId}');
     }
     return Future.value(result);
   }
@@ -123,6 +129,12 @@ class Repository implements RepositoryImp {
       textSearch: textSearch,
     );
   }
+
+  @override
+  Future<NetworkResult<NetworkResultPaging<User>, NetworkError>> getUserChatList({User lastUser}) async {
+    final userFirebaseResponse = await _firebaseStorageManager.getAllUser(lastUser: lastUser);
+    return NetworkResult(NetworkResultPaging(userFirebaseResponse.first, userFirebaseResponse.last, null), null);
+  }
 }
 
 abstract class RepositoryImp {
@@ -137,6 +149,8 @@ abstract class RepositoryImp {
 
   //region User
   Future<NetworkResult<User, NetworkError>> getCurrentUser();
+
+  Future<NetworkResult<NetworkResultPaging<User>, NetworkError>> getUserChatList({User lastUser});
 
   //endregion
 

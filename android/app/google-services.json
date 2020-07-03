@@ -1,0 +1,77 @@
+{
+  "project_info": {
+    "project_number": "323627227839",
+    "firebase_url": "https://sam-dev-f9787.firebaseio.com",
+    "project_id": "sam-dev-f9787",
+    "storage_bucket": "sam-dev-f9787.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:323627227839:android:eacc550a07680d923f440a",
+        "android_client_info": {
+          "package_name": "com.khoantt91.samapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "323627227839-feq2l1q294cgr0gq9a71p8e63fsibcjk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlyGjBFsnO87JSkSOcyWI9ljAavhf5x4Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "323627227839-feq2l1q294cgr0gq9a71p8e63fsibcjk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:323627227839:android:2b55a5a9d328ecc43f440a",
+        "android_client_info": {
+          "package_name": "vn.propzy.samagent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "323627227839-f2ts23su3n3tsv5tr9turacha2qlbk5l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "vn.propzy.samagent",
+            "certificate_hash": "b85dc5adec015ebc5ec9f4073505487eae36c203"
+          }
+        },
+        {
+          "client_id": "323627227839-feq2l1q294cgr0gq9a71p8e63fsibcjk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlyGjBFsnO87JSkSOcyWI9ljAavhf5x4Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "323627227839-feq2l1q294cgr0gq9a71p8e63fsibcjk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

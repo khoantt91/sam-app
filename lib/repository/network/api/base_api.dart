@@ -18,7 +18,7 @@ NetworkResult<T, NetworkError> handleSingleResponse<T>(Response<dynamic> result)
     return NetworkResult(
         null,
         NetworkError(
-          code: NetworkError.ERROR_CODE_UNKNOWN,
+          code: NetworkError.ERROR_NETWORK_CODE_UNKNOWN,
           message: 'Unknown type of data = ${result.data['data'].toString()}',
         ));
   }
@@ -36,7 +36,7 @@ NetworkResult<T, NetworkError> handleSingleResponse<T>(Response<dynamic> result)
   } else if (T == Listing) {
     return NetworkResult(Listing.fromJson(networkResponse.data) as T, null);
   } else
-    return NetworkResult(null, NetworkError(code: NetworkError.ERROR_CODE_PARSING, message: 'Unknown this model ????'));
+    return NetworkResult(null, NetworkError(code: NetworkError.ERROR_NETWORK_CODE_PARSING, message: 'Unknown this model ????'));
 }
 
 /// Handle list object from response
@@ -48,7 +48,7 @@ NetworkResult<NetworkResultPaging<S>, NetworkError> handleListResponse<S>(Respon
     return NetworkResult(
         null,
         NetworkError(
-          code: NetworkError.ERROR_CODE_UNKNOWN,
+          code: NetworkError.ERROR_NETWORK_CODE_UNKNOWN,
           message: 'Unknown type of data = ${result.data['data'].toString()}',
         ));
   }
@@ -86,7 +86,7 @@ NetworkResult<Map<String, dynamic>, NetworkError> handleRawResponse(Response<dyn
     return NetworkResult(
         null,
         NetworkError(
-          code: NetworkError.ERROR_CODE_UNKNOWN,
+          code: NetworkError.ERROR_NETWORK_CODE_UNKNOWN,
           message: 'Unknown type of data = ${result.data['data'].toString()}',
         ));
   }

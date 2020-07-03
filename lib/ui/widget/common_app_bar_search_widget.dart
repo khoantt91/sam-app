@@ -62,6 +62,7 @@ class _CommonSearchAppBar extends State<CommonSearchAppBar> {
                     child: Align(
                       alignment: Alignment.bottomLeft,
                       child: TextField(
+                        textAlignVertical: TextAlignVertical.center,
                         controller: widget.controller,
                         textInputAction: TextInputAction.search,
                         onSubmitted: (_) {
