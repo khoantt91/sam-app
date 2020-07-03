@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:samapp/model/user.dart';
 import 'package:samapp/ui/common/base_stateless_widget.dart';
 import 'package:samapp/utils/constant/dimen.dart';
 
 class ContactItem extends BaseStateLessWidget {
+  final User _user;
+
+  ContactItem(this._user);
+
   @override
   Widget getLayout(BuildContext context) => Column(
         children: [
@@ -26,7 +31,7 @@ class ContactItem extends BaseStateLessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text('Nhung Trần'),
+                    Text(_user.name),
                     Row(
                       children: [
                         Icon(
