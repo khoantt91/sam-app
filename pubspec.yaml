@@ -32,6 +32,8 @@ dependencies:
 
   transparent_image: ^1.0.0
 
+  bubble: ^1.1.9+1
+
   json_annotation: ^3.0.0
 
   equatable: ^1.2.0

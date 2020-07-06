@@ -9,9 +9,11 @@ abstract class BaseStateFulWidget extends StatefulWidget {
 abstract class BaseState<B extends BaseStateFulWidget> extends State<B> {
   /// should be overridden in extended widget
   Widget getLayout();
+  BuildContext buildContext;
 
   @override
   Widget build(BuildContext context) {
+    this.buildContext = context;
     return getLayout();
   }
 

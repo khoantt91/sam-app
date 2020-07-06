@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:samapp/model/user.dart';
 import 'package:samapp/repository/repository.dart';
+import 'package:samapp/ui/chat/chat_screen.dart';
 import 'package:samapp/ui/common/base_statefull_widget.dart';
 import 'package:samapp/ui/main/item/contact_item.dart';
 import 'package:samapp/ui/widget/common_app_bar.dart';
@@ -83,6 +84,7 @@ class _ChatTabScreenState extends BaseState<ChatTabScreen> {
                       itemBuilder: (ctx, index) {
                         return ContactItem(_userList[index], (User user) {
                           Log.w('Select user ${user.name}');
+                          Navigator.of(context).pushNamed(ChatScreen.routerName, arguments: user);
                         });
                       },
                       separatorBuilder: (context, index) {
