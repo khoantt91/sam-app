@@ -2,6 +2,7 @@ import 'package:samapp/model/app_error.dart';
 import 'package:samapp/model/constant.dart';
 import 'package:samapp/model/deal.dart';
 import 'package:samapp/model/listing.dart';
+import 'package:samapp/model/message.dart';
 import 'package:samapp/repository/firebase/firebase_storage_manager.dart';
 import 'package:samapp/repository/local/common_storage/common_storage_manager.dart';
 import 'package:samapp/repository/local/secure_storage/secure_storage_constant.dart';
@@ -53,7 +54,7 @@ class Repository implements RepositoryImp {
       final token = result.success.token;
       await _secureStorageManager.write(SecureStorageConstant.ACCESS_TOKEN, token);
       await _commonStorageManager.storeCurrentUser(result.success);
-      await _firebaseStorageManager.insertOrUpdate(result.success);
+      await _firebaseStorageManager.insertOrUpdateUser(result.success);
       Log.i('\n- Store user & access token successfully\n- Store user info into FireStore successfully\n- UserId=${result.success.userId}');
     }
     return Future.value(result);
@@ -134,6 +135,21 @@ class Repository implements RepositoryImp {
   Future<RepositoryResult<RepositoryResultPaging<User>, AppError>> getUserChatList({User lastUser}) async {
     return _firebaseStorageManager.getAllUser(lastUser: lastUser);
   }
+
+  @override
+  Future<RepositoryResult<String, AppError>> getOrCreateChatRoomId(List<User> users) async {
+    return _firebaseStorageManager.getOrCreateChatRoomId(users);
+  }
+
+  @override
+  Future<RepositoryResult<dynamic, AppError>> insertMessage(Message message) async {
+    return _firebaseStorageManager.insertMessage(message);
+  }
+
+  @override
+  Future<RepositoryResult<RepositoryResultPaging<Message>, AppError>> getAllMessageInRoom(String chatRoomId, {Message lastMessage}) async {
+    return _firebaseStorageManager.getAllMessageInRoom(chatRoomId, lastMessage: lastMessage);
+  }
 }
 
 abstract class RepositoryImp {
@@ -150,6 +166,15 @@ abstract class RepositoryImp {
   Future<RepositoryResult<User, AppError>> getCurrentUser();
 
   Future<RepositoryResult<RepositoryResultPaging<User>, AppError>> getUserChatList({User lastUser});
+
+  //endregion
+
+  //region Chat
+  Future<RepositoryResult<String, AppError>> getOrCreateChatRoomId(List<User> users);
+
+  Future<RepositoryResult<dynamic, AppError>> insertMessage(Message message);
+
+  Future<RepositoryResult<RepositoryResultPaging<Message>, AppError>> getAllMessageInRoom(String chatRoomId, {Message lastMessage});
 
   //endregion
 
