@@ -1,4 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:samapp/model/user.dart';
@@ -17,14 +16,14 @@ class ChatTabScreen extends BaseStateFulWidget {
 }
 
 class _ChatTabScreenState extends BaseState<ChatTabScreen> {
-  List<User> _userList;
+  List<User> _userList = [];
 
   @override
   void initState() {
     super.initState();
-
     final repository = RepositoryProvider.of<RepositoryImp>(context);
     repository.getUserChatList().then((result) {
+      Log.d('Result get user chat list = $result');
       if (result.error != null) return Log.e('Error ${result.error.message}');
       setState(() {
         _userList = result.success.list;
@@ -78,9 +77,18 @@ class _ChatTabScreenState extends BaseState<ChatTabScreen> {
               height: constraint.maxHeight - 48 * 2 - appBar.preferredSize.height,
               child: _userList.isEmpty
                   ? Text('No user')
-                  : ListView.builder(itemBuilder: (ctx, index) {
-                      return ContactItem(_userList[index]);
-                    }),
+                  : ListView.separated(
+                      padding: EdgeInsets.zero,
+                      itemCount: _userList.length,
+                      itemBuilder: (ctx, index) {
+                        return ContactItem(_userList[index], (User user) {
+                          Log.w('Select user ${user.name}');
+                        });
+                      },
+                      separatorBuilder: (context, index) {
+                        return Divider();
+                      },
+                    ),
             )
           ],
         ),

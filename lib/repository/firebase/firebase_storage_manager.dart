@@ -6,6 +6,7 @@ import 'package:samapp/repository/firebase/firebase_storage_constant.dart';
 import 'package:samapp/repository/firebase/model/firebase_error.dart';
 import 'package:samapp/repository/firebase/model/firebase_result.dart';
 import 'package:samapp/repository/firebase/model/firebase_result_paging.dart';
+import 'package:samapp/utils/log/log.dart';
 
 class FirebaseStorageManager implements FirebaseStorageManagerImp {
   DocumentReference firebaseDb = Firestore.instance.collection(FirebaseStorageConstant.DATABASE_NAME).document(FirebaseStorageConstant.DATABASE_DEV);
@@ -26,6 +27,7 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
   @override
   Future<FirebaseResult<FirebaseResultPaging<User>, FirebaseError>> getAllUser({User lastUser}) async {
     try {
+      Log.w('START GET ALL USER');
       CollectionReference collectionReference = firebaseDb.collection(FirebaseStorageConstant.COLLECTION_USER);
 
       int totalDocuments = await _getTotalQuerySnapshot(collectionReference);
@@ -36,7 +38,7 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
       }
       userCollection = userCollection.limit(FirebaseStorageConstant.LIMIT_QUERY);
       final querySnapshot = await userCollection.getDocuments();
-      List<User> userList = querySnapshot.documents.map((documentSnapshot) => parseDataSnapshot<User>(documentSnapshot.data));
+      List<User> userList = querySnapshot.documents.map((documentSnapshot) => parseDataSnapshot<User>(documentSnapshot.data)).toList();
 
       return FirebaseResult(FirebaseResultPaging<User>(userList, totalDocuments, null), null);
     } on Exception catch (ex) {

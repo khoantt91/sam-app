@@ -28,7 +28,9 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  logger: any  #for logging purpose
+  logger: ^0.9.1  #for logging purpose
+
+  transparent_image: ^1.0.0
 
   json_annotation: ^3.0.0
 

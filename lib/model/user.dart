@@ -9,6 +9,7 @@ class User {
   String password;
   String token;
   String email;
+  String photo;
 
   User({this.userId, this.password, this.token, this.email});
 
