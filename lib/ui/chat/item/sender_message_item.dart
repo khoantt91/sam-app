@@ -1,10 +1,17 @@
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:samapp/model/message.dart';
 import 'package:samapp/ui/common/base_stateless_widget.dart';
 import 'package:samapp/utils/constant/dimen.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class SenderMessageItem extends BaseStateLessWidget {
+  final Message _message;
+  final String _avatar;
+
+  SenderMessageItem(this._message, this._avatar);
+
   @override
   Widget getLayout(BuildContext context) => Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -12,12 +19,18 @@ class SenderMessageItem extends BaseStateLessWidget {
           Container(
             width: 40,
             height: 40,
-            margin: EdgeInsets.only(top: Dimen.spacingSuperTiny),
+            margin: EdgeInsets.only(top: Dimen.spacingSuperTiny, left: Dimen.spacingSmall),
             child: ClipOval(
-              child: Image.asset(
-                'assets/images/ic_avatar_default.png',
-                fit: BoxFit.contain,
-              ),
+              child: _avatar == null
+                  ? Image.asset(
+                      'assets/images/ic_avatar_default.png',
+                      fit: BoxFit.contain,
+                    )
+                  : FadeInImage.memoryNetwork(
+                      placeholder: kTransparentImage,
+                      image: _avatar,
+                      fit: BoxFit.contain,
+                    ),
             ),
           ),
           Container(
@@ -27,17 +40,25 @@ class SenderMessageItem extends BaseStateLessWidget {
               children: [
                 Container(
                     margin: EdgeInsets.only(top: Dimen.spacingSuperTiny, left: Dimen.spacingTiny),
-                    child: Bubble(
-                      margin: BubbleEdges.only(top: 10),
-                      nip: BubbleNip.leftTop,
-                      child: Text('Hi Long, đây là một đoạn text rất là dài và cần phải được wrap_text, xem thử xem nó có warp_text không nhé!'),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Bubble(
+                          margin: BubbleEdges.only(top: 10),
+                          nip: BubbleNip.leftTop,
+                          child: Text(_message.content.toString()),
+                        ),
+                      ],
                     )),
                 Container(
-                    margin: EdgeInsets.only(top: Dimen.spacingSuperTiny, right: Dimen.spacingTiny),
+                    margin: EdgeInsets.only(top: Dimen.spacingSuperTiny, left: Dimen.spacingNormal),
                     child: Text(
                       '15:30 20/07/2020',
-                      textAlign: TextAlign.right,
-                      style: Theme.of(context).textTheme.bodyText2.copyWith(color: Theme.of(context).hintColor),
+                      textAlign: TextAlign.left,
+                      style: Theme.of(context).textTheme.bodyText2.copyWith(
+                            color: Theme.of(context).hintColor,
+                            fontSize: Dimen.fontTiny,
+                          ),
                     )),
               ],
             ),

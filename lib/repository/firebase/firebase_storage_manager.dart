@@ -32,7 +32,7 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
           firebaseDb.collection(FirebaseStorageConstant.COLLECTION_MESSAGE).where(FirebaseStorageConstant.FIELD_CHAT_ROOM_ID, isEqualTo: chatRoomId);
       int totalDocuments = await _getTotalQuerySnapshot(collectionReference);
 
-      Query messageCollection = collectionReference.orderBy(FirebaseStorageConstant.FIELD_CREATED_AT);
+      Query messageCollection = collectionReference.orderBy(FirebaseStorageConstant.FIELD_CREATED_AT, descending: true);
       if (lastMessage != null) {
         messageCollection = messageCollection.startAfter([lastMessage.createdAt]);
       }

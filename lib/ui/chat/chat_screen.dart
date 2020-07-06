@@ -23,6 +23,7 @@ class ChatScreen extends BaseStateFulWidget {
 }
 
 class _ChatScreenState extends BaseState<ChatScreen> {
+  List<Message> _messageList = [];
   User _currentUser;
   String _chatRoomId;
   TextEditingController _messageController = TextEditingController();
@@ -30,16 +31,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    final repository = RepositoryProvider.of<RepositoryImp>(context);
-    repository.getCurrentUser().then((result) {
-      this._currentUser = result.success;
-      repository.getOrCreateChatRoomId([result.success, widget._chatUser]).then((value) {
-        this._chatRoomId = value.success;
-        repository.getAllMessageInRoom(_chatRoomId).then((value) => value.success.list.forEach((element) {
-              Log.i('Message=${element.content}');
-            }));
-      });
-    });
+    _getAllMessage();
   }
 
   @override
@@ -58,22 +50,44 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: appBar,
-      body: SingleChildScrollView(
-        child: Container(
-          height: MediaQuery.of(context).size.height - appBar.preferredSize.height,
-          child: Column(
-            children: [
-              Expanded(
-                  flex: 1,
-                  child: ListView.builder(
-                    itemBuilder: (ctx, index) => index % 3 == 0 ? ReceiverMessageItem() : SenderMessageItem(),
-                  )),
-              ChatTextFieldWidget(_messageController, _sendMessage),
-            ],
-          ),
+      body: Container(
+        height: MediaQuery.of(context).size.height - appBar.preferredSize.height,
+        child: Stack(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height - appBar.preferredSize.height - 56,
+              child: ListView.builder(
+                reverse: true,
+                itemCount: _messageList.length,
+                itemBuilder: (ctx, index) => _messageList[index].sender != _currentUser.userId.toString()
+                    ? SenderMessageItem(_messageList[index], widget._chatUser.photo)
+                    : ReceiverMessageItem(_messageList[index]),
+              ),
+            ),
+            Align(alignment: Alignment.bottomCenter, child: Container(height: 56, child: ChatTextFieldWidget(_messageController, _sendMessage))),
+          ],
         ),
       ),
     );
+  }
+
+  void _getAllMessage() async {
+    final repository = RepositoryProvider.of<RepositoryImp>(context);
+
+    final userResult = await repository.getCurrentUser();
+    this._currentUser = userResult.success;
+
+    final chatRoomResult = await repository.getOrCreateChatRoomId([this._currentUser, widget._chatUser]);
+    this._chatRoomId = chatRoomResult.success;
+
+    final allMessageResult = await repository.getAllMessageInRoom(this._chatRoomId);
+
+    allMessageResult.success.list.forEach((element) {
+      Log.i('Message=${element.content}');
+    });
+    setState(() {
+      _messageList.addAll(allMessageResult.success.list);
+    });
   }
 
   void _sendMessage() async {
@@ -86,5 +100,8 @@ class _ChatScreenState extends BaseState<ChatScreen> {
         createdAt: DateTime.now().millisecondsSinceEpoch);
     final repository = RepositoryProvider.of<RepositoryImp>(context);
     final result = await repository.insertMessage(message);
+    setState(() {
+      _messageList.insert(0, message);
+    });
   }
 }
