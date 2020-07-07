@@ -38,10 +38,16 @@ class ReceiverMessageItem extends BaseStateLessWidget {
                     )),
                 Container(
                     margin: EdgeInsets.only(top: Dimen.spacingSuperTiny, right: Dimen.spacingNormal),
-                    child: Text(
-                      '15:30 20/07/2020',
-                      textAlign: TextAlign.right,
-                      style: Theme.of(context).textTheme.bodyText2.copyWith(color: Theme.of(context).hintColor, fontSize: Dimen.fontTiny),
+                    child: Opacity(
+                      opacity: 0.5,
+                      child: Text(
+                        '15:30 20/07/2020',
+                        textAlign: TextAlign.right,
+                        style: Theme.of(context).textTheme.bodyText2.copyWith(
+                              color: Theme.of(context).hintColor,
+                              fontSize: Dimen.fontTiny,
+                            ),
+                      ),
                     )),
               ],
             ),

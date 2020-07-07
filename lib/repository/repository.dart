@@ -150,6 +150,11 @@ class Repository implements RepositoryImp {
   Future<RepositoryResult<RepositoryResultPaging<Message>, AppError>> getAllMessageInRoom(String chatRoomId, {Message lastMessage}) async {
     return _firebaseStorageManager.getAllMessageInRoom(chatRoomId, lastMessage: lastMessage);
   }
+
+  @override
+  Stream<RepositoryResult<Message, AppError>> observerNewMessage(String chatRoomId) {
+    return _firebaseStorageManager.observerNewMessage(chatRoomId);
+  }
 }
 
 abstract class RepositoryImp {
@@ -175,6 +180,8 @@ abstract class RepositoryImp {
   Future<RepositoryResult<dynamic, AppError>> insertMessage(Message message);
 
   Future<RepositoryResult<RepositoryResultPaging<Message>, AppError>> getAllMessageInRoom(String chatRoomId, {Message lastMessage});
+
+  Stream<RepositoryResult<Message, AppError>> observerNewMessage(String chatRoomId);
 
   //endregion
 

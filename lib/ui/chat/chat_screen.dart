@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +12,7 @@ import 'package:samapp/ui/common/base_statefull_widget.dart';
 import 'package:samapp/ui/widget/chat_text_field_widget.dart';
 import 'package:samapp/ui/widget/common_app_bar.dart';
 import 'package:samapp/utils/log/log.dart';
+import 'package:samapp/utils/utils.dart';
 
 class ChatScreen extends BaseStateFulWidget {
   static const routerName = '/chat-screen/';
@@ -28,10 +31,18 @@ class _ChatScreenState extends BaseState<ChatScreen> {
   String _chatRoomId;
   TextEditingController _messageController = TextEditingController();
 
+  StreamSubscription _stream;
+
   @override
   void initState() {
     super.initState();
     _getAllMessage();
+  }
+
+  @override
+  void dispose() {
+    _stream?.cancel();
+    super.dispose();
   }
 
   @override
@@ -50,12 +61,11 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: appBar,
-      body: Container(
-        height: MediaQuery.of(context).size.height - appBar.preferredSize.height,
-        child: Stack(
+      body: LayoutBuilder(builder: (ctx, constraint) {
+        return Stack(
           children: [
             Container(
-              height: MediaQuery.of(context).size.height - appBar.preferredSize.height - 56,
+              height: constraint.maxHeight - 56,
               child: ListView.builder(
                 reverse: true,
                 itemCount: _messageList.length,
@@ -66,8 +76,8 @@ class _ChatScreenState extends BaseState<ChatScreen> {
             ),
             Align(alignment: Alignment.bottomCenter, child: Container(height: 56, child: ChatTextFieldWidget(_messageController, _sendMessage))),
           ],
-        ),
-      ),
+        );
+      }),
     );
   }
 
@@ -82,26 +92,32 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
     final allMessageResult = await repository.getAllMessageInRoom(this._chatRoomId);
 
-    allMessageResult.success.list.forEach((element) {
-      Log.i('Message=${element.content}');
-    });
     setState(() {
       _messageList.addAll(allMessageResult.success.list);
     });
+
+    _observerNewMessage();
   }
 
   void _sendMessage() async {
-    Log.w('Send new message = ${_messageController.text.toString()}');
     final message = Message(
         content: _messageController.text.toString(),
         sender: _currentUser.userId.toString(),
         receiver: widget._chatUser.userId.toString(),
         chatRoomId: _chatRoomId,
         createdAt: DateTime.now().millisecondsSinceEpoch);
+    _messageController.text = '';
     final repository = RepositoryProvider.of<RepositoryImp>(context);
-    final result = await repository.insertMessage(message);
-    setState(() {
-      _messageList.insert(0, message);
+    await repository.insertMessage(message);
+    await sendAndRetrieveMessage();
+  }
+
+  void _observerNewMessage() {
+    final repository = RepositoryProvider.of<RepositoryImp>(context);
+    _stream = repository.observerNewMessage(_chatRoomId).listen((result) {
+      setState(() {
+        _messageList.insert(0, result.success);
+      });
     });
   }
 }

@@ -66,6 +66,10 @@ dependencies:
 
   cloud_firestore: ^0.12.9+5
 
+  firebase_messaging: ^6.0.16
+
+  flutter_local_notifications: ^1.4.4+1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

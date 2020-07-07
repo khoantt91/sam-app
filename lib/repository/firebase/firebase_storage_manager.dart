@@ -100,6 +100,25 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
     }
   }
 
+  @override
+  Stream<FirebaseResult<Message, FirebaseError>> observerNewMessage(String chatRoomId) {
+    final messageCollection =
+        firebaseDb.collection(FirebaseStorageConstant.COLLECTION_MESSAGE).where(FirebaseStorageConstant.FIELD_CHAT_ROOM_ID, isEqualTo: chatRoomId);
+    return messageCollection.snapshots().where((querySnapshot) {
+      if (querySnapshot.documentChanges.length != 1) return false;
+
+      final documentChanged = querySnapshot.documentChanges[0];
+      if (documentChanged.type == DocumentChangeType.added) {
+        return true;
+      } else {
+        return false;
+      }
+    }).map((querySnapshot) {
+      final message = parseDataSnapshot<Message>(querySnapshot.documentChanges[0].document.data);
+      return FirebaseResult(message, null);
+    });
+  }
+
   //region Private Support Methods
   S parseDataSnapshot<S>(Map<String, dynamic> json) {
     if (S == User) {
@@ -149,4 +168,6 @@ abstract class FirebaseStorageManagerImp {
   Future<FirebaseResult<dynamic, FirebaseError>> insertMessage(Message message);
 
   Future<FirebaseResult<FirebaseResultPaging<Message>, FirebaseError>> getAllMessageInRoom(String chatRoomId, {Message lastMessage});
+
+  Stream<FirebaseResult<Message, FirebaseError>> observerNewMessage(String chatRoomId);
 }
