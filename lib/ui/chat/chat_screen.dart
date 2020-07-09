@@ -109,7 +109,8 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     _messageController.text = '';
     final repository = RepositoryProvider.of<RepositoryImp>(context);
     await repository.insertMessage(message);
-    await sendAndRetrieveMessage();
+    final tokenList = await repository.getUserFirebaseTokens(widget._chatUser);
+    await sendNotificationMessage(message.content, _currentUser, tokenList.success.list);
   }
 
   void _observerNewMessage() {

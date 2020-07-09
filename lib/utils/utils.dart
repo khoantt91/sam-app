@@ -5,13 +5,12 @@ import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:samapp/main.dart';
+import 'package:samapp/model/message.dart';
+import 'package:samapp/model/user.dart';
 import 'package:samapp/utils/log/log.dart';
 
-final String serverToken = 'AAAAS1mvmr8:APA91bGTfXYhVobH3B3lrz5i5FaW8JqqloZRJi9FpC6ga5xoVli0nvmI9ZVnLlNMT3j929nVO4ktkxaqrEzwMYHNhx6UZ8JkFUabCgW1sk92dIoodfNm_A1trzxgsnPTWMY7tCQ0-tKy';
-final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
-
-Future<Map<String, dynamic>> sendAndRetrieveMessage() async {
-
+Future<Map<String, dynamic>> sendNotificationMessage(String message, User sender, List<String> firebaseTokens) async {
   await firebaseMessaging.requestNotificationPermissions(
     const IosNotificationSettings(sound: true, badge: true, alert: true, provisional: false),
   );
@@ -44,39 +43,26 @@ Future<Map<String, dynamic>> sendAndRetrieveMessage() async {
       'Authorization': 'key=$serverToken',
     }),
     data: jsonEncode(<String, dynamic>{
-      'notification': <String, dynamic>{'body': 'this is a body', 'title': 'this is a title'},
+      'notification': <String, dynamic>{'body': message, 'title': sender.name},
       'priority': 'high',
       'data': <String, dynamic>{'click_action': 'FLUTTER_NOTIFICATION_CLICK', 'id': '1', 'status': 'done'},
-      'to': await firebaseMessaging.getToken(),
+      'registration_ids': firebaseTokens,
     }),
   );
-
-  final Completer<Map<String, dynamic>> completer = Completer<Map<String, dynamic>>();
-
-  firebaseMessaging.configure(
-    onMessage: (Map<String, dynamic> message) async {
-      Log.w('New Message=$message');
-      await _showNotificationWithDefaultSound('Notificaiton Test', 'Hello World');
-      completer.complete(message);
-    },
-  );
-
-  return completer.future;
 }
 
-Future _showNotificationWithDefaultSound(String title, String message) async {
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-  var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'channel_id', 'channel_name', 'channel_description',
+Future showNotificationWithDefaultSound(Map<String, dynamic> notificationMessage) async {
+  var androidPlatformChannelSpecifics = new AndroidNotificationDetails('your channel id', 'your channel name', 'your channel description',
       importance: Importance.Max, priority: Priority.High);
-  var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-  var platformChannelSpecifics = NotificationDetails(
-      androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+
+  var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+
+  var platformChannelSpecifics = new NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+
   await flutterLocalNotificationsPlugin.show(
     0,
-    '$title',
-    '$message',
+    notificationMessage['notification']['title'],
+    notificationMessage['notification']['body'],
     platformChannelSpecifics,
     payload: 'Default_Sound',
   );

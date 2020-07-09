@@ -9,6 +9,7 @@ class FirebaseStorageConstant {
   static String COLLECTION_CHAT_ROOM = "chat_rooms";
 
   static String FIELD_USER_ID = "userId";
+  static String FIELD_FIREBASE_TOKENS = "firebaseTokens";
   static String FIELD_CHAT_ROOM_ID = "chatRoomId";
   static String FIELD_CREATED_AT = "createdAt";
 

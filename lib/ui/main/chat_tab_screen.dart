@@ -22,14 +22,7 @@ class _ChatTabScreenState extends BaseState<ChatTabScreen> {
   @override
   void initState() {
     super.initState();
-    final repository = RepositoryProvider.of<RepositoryImp>(context);
-    repository.getUserChatList().then((result) {
-      Log.d('Result get user chat list = $result');
-      if (result.error != null) return Log.e('Error ${result.error.message}');
-      setState(() {
-        _userList = result.success.list;
-      });
-    });
+    _getUserChatList();
   }
 
   @override
@@ -95,6 +88,18 @@ class _ChatTabScreenState extends BaseState<ChatTabScreen> {
           ],
         ),
       );
+    });
+  }
+
+  void _getUserChatList() async {
+    final repository = RepositoryProvider.of<RepositoryImp>(context);
+    final currentUserResult = await repository.getCurrentUser();
+    repository.getUserChatList(currentUserResult.success).then((result) {
+      Log.d('Result get user chat list = ${result.success.list.length}');
+      if (result.error != null) return Log.e('Error ${result.error.message}');
+      setState(() {
+        _userList = result.success.list;
+      });
     });
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:samapp/model/user.dart';
 import 'package:samapp/repository/repository.dart';
 import 'package:samapp/ui/common/base_statefull_widget.dart';
 import 'package:samapp/ui/onboarding/splash_screen.dart';
@@ -19,6 +20,13 @@ class MainAppBarWidget extends BaseStateFulWidget {
 
 class _MainAppBarWidgetState extends BaseState<MainAppBarWidget> {
   String _title = '...';
+  User _user;
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserInfo();
+  }
 
   @override
   Widget getLayout() {
@@ -58,7 +66,7 @@ class _MainAppBarWidgetState extends BaseState<MainAppBarWidget> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        'Nguyễn Nhật Quang',
+                        _user == null ? '...' : _user.name,
                         style: Theme.of(context).textTheme.bodyText1.copyWith(color: Colors.white),
                       ),
                       _buildRolePopupMenu(),
@@ -133,6 +141,14 @@ class _MainAppBarWidgetState extends BaseState<MainAppBarWidget> {
       showErrorSnackbar('Đăng xuất thất bại!');
     }
   }
+
 //endregion
 
+  void _getUserInfo() async {
+    final repository = RepositoryProvider.of<RepositoryImp>(context);
+    final result = await repository.getCurrentUser();
+    setState(() {
+      this._user = result.success;
+    });
+  }
 }

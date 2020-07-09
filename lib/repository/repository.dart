@@ -1,3 +1,4 @@
+import 'package:samapp/main.dart';
 import 'package:samapp/model/app_error.dart';
 import 'package:samapp/model/constant.dart';
 import 'package:samapp/model/deal.dart';
@@ -11,6 +12,7 @@ import 'package:samapp/repository/model/repository_result.dart';
 import 'package:samapp/repository/model/repository_result_paging.dart';
 import 'package:samapp/repository/network/network_api.dart';
 import 'package:samapp/utils/log/log.dart';
+import 'package:samapp/utils/utils.dart';
 import '../model/user.dart';
 
 class Repository implements RepositoryImp {
@@ -48,6 +50,7 @@ class Repository implements RepositoryImp {
     /* 1. Store user token in SecureStorage
     *  2. Store user info in CommonStorage
     *  3. Store user info in FireStore
+    *  4. Store firebase token into user info
     *  when user sign in successfully
     * */
     if (result.success != null) {
@@ -55,6 +58,7 @@ class Repository implements RepositoryImp {
       await _secureStorageManager.write(SecureStorageConstant.ACCESS_TOKEN, token);
       await _commonStorageManager.storeCurrentUser(result.success);
       await _firebaseStorageManager.insertOrUpdateUser(result.success);
+      await _firebaseStorageManager.insertUserFirebaseToken(result.success, await firebaseMessaging.getToken());
       Log.i('\n- Store user & access token successfully\n- Store user info into FireStore successfully\n- UserId=${result.success.userId}');
     }
     return Future.value(result);
@@ -68,6 +72,9 @@ class Repository implements RepositoryImp {
 
     /* Delete all local current user data */
     if (result.success != null) {
+      final currentUserResult = await getCurrentUser();
+      await _firebaseStorageManager.deleteUserFirebaseToken(currentUserResult.success, await firebaseMessaging.getToken());
+
       _token = null;
       _fbToken = null;
       await _secureStorageManager.deleteAll();
@@ -132,8 +139,8 @@ class Repository implements RepositoryImp {
   }
 
   @override
-  Future<RepositoryResult<RepositoryResultPaging<User>, AppError>> getUserChatList({User lastUser}) async {
-    return _firebaseStorageManager.getAllUser(lastUser: lastUser);
+  Future<RepositoryResult<RepositoryResultPaging<User>, AppError>> getUserChatList(User user, {User lastUser}) async {
+    return _firebaseStorageManager.getAllUser(user, lastUser: lastUser);
   }
 
   @override
@@ -155,6 +162,11 @@ class Repository implements RepositoryImp {
   Stream<RepositoryResult<Message, AppError>> observerNewMessage(String chatRoomId) {
     return _firebaseStorageManager.observerNewMessage(chatRoomId);
   }
+
+  @override
+  Future<RepositoryResult<RepositoryResultPaging<String>, AppError>> getUserFirebaseTokens(User user) async {
+    return _firebaseStorageManager.getUserFirebaseTokens(user);
+  }
 }
 
 abstract class RepositoryImp {
@@ -170,7 +182,9 @@ abstract class RepositoryImp {
   //region User
   Future<RepositoryResult<User, AppError>> getCurrentUser();
 
-  Future<RepositoryResult<RepositoryResultPaging<User>, AppError>> getUserChatList({User lastUser});
+  Future<RepositoryResult<RepositoryResultPaging<User>, AppError>> getUserChatList(User user, {User lastUser});
+
+  Future<RepositoryResult<RepositoryResultPaging<String>, AppError>> getUserFirebaseTokens(User user);
 
   //endregion
 

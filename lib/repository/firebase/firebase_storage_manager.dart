@@ -7,7 +7,6 @@ import 'package:samapp/repository/firebase/firebase_storage_constant.dart';
 import 'package:samapp/repository/firebase/model/firebase_error.dart';
 import 'package:samapp/repository/firebase/model/firebase_result.dart';
 import 'package:samapp/repository/firebase/model/firebase_result_paging.dart';
-import 'package:samapp/utils/log/log.dart';
 
 class FirebaseStorageManager implements FirebaseStorageManagerImp {
   DocumentReference firebaseDb = Firestore.instance.collection(FirebaseStorageConstant.DATABASE_NAME).document(FirebaseStorageConstant.DATABASE_DEV);
@@ -19,6 +18,47 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
       Map<String, dynamic> jsonUser = user.toJson();
       jsonUser['updatedAt'] = DateTime.now().millisecondsSinceEpoch;
       await userCollection.document(user.userId.toString()).setData(jsonUser, merge: true);
+      return FirebaseResult(true, null);
+    } on Exception catch (ex) {
+      return FirebaseResult(null, FirebaseError(message: ex.toString()));
+    }
+  }
+
+  @override
+  Future<FirebaseResult<FirebaseResultPaging<String>, FirebaseError>> getUserFirebaseTokens(User user) async {
+    try {
+      final userCollection = firebaseDb
+          .collection(FirebaseStorageConstant.COLLECTION_USER)
+          .document(user.userId.toString())
+          .collection(FirebaseStorageConstant.FIELD_FIREBASE_TOKENS);
+      final querySnapshot = await userCollection.getDocuments();
+      List<String> firebaseTokens = querySnapshot.documents.map((document) => document.documentID.toString()).toList();
+      return FirebaseResult(FirebaseResultPaging<String>(firebaseTokens, null, null), null);
+    } on Exception catch (ex) {
+      return FirebaseResult(null, FirebaseError(message: ex.toString()));
+    }
+  }
+
+  @override
+  Future<FirebaseResult<dynamic, FirebaseError>> insertUserFirebaseToken(User user, String firebaseToken) async {
+    try {
+      final userCollection = firebaseDb
+          .collection(FirebaseStorageConstant.COLLECTION_USER)
+          .document(user.userId.toString())
+          .collection(FirebaseStorageConstant.FIELD_FIREBASE_TOKENS);
+      await userCollection.document(firebaseToken).setData({'status': true});
+      return FirebaseResult(true, null);
+    } on Exception catch (ex) {
+      return FirebaseResult(null, FirebaseError(message: ex.toString()));
+    }
+  }
+
+  @override
+  Future<FirebaseResult<dynamic, FirebaseError>> deleteUserFirebaseToken(User user, String firebaseToken) async {
+    try {
+      final userCollection =
+          firebaseDb.collection(FirebaseStorageConstant.COLLECTION_USER).document(user.userId.toString()).collection('firebaseTokens');
+      await userCollection.document(firebaseToken).delete();
       return FirebaseResult(true, null);
     } on Exception catch (ex) {
       return FirebaseResult(null, FirebaseError(message: ex.toString()));
@@ -47,7 +87,7 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
   }
 
   @override
-  Future<FirebaseResult<FirebaseResultPaging<User>, FirebaseError>> getAllUser({User lastUser}) async {
+  Future<FirebaseResult<FirebaseResultPaging<User>, FirebaseError>> getAllUser(User currentUser, {User lastUser}) async {
     try {
       CollectionReference collectionReference = firebaseDb.collection(FirebaseStorageConstant.COLLECTION_USER);
 
@@ -59,7 +99,10 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
       }
       userCollection = userCollection.limit(FirebaseStorageConstant.LIMIT_QUERY);
       final querySnapshot = await userCollection.getDocuments();
-      List<User> userList = querySnapshot.documents.map((documentSnapshot) => parseDataSnapshot<User>(documentSnapshot.data)).toList();
+      List<User> userList = querySnapshot.documents
+          .where((element) => element.documentID.toString() != currentUser.userId.toString())
+          .map((documentSnapshot) => parseDataSnapshot<User>(documentSnapshot.data))
+          .toList();
 
       return FirebaseResult(FirebaseResultPaging<User>(userList, totalDocuments, null), null);
     } on Exception catch (ex) {
@@ -161,7 +204,13 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
 abstract class FirebaseStorageManagerImp {
   Future<FirebaseResult<dynamic, FirebaseError>> insertOrUpdateUser(User user);
 
-  Future<FirebaseResult<FirebaseResultPaging<User>, FirebaseError>> getAllUser({User lastUser});
+  Future<FirebaseResult<FirebaseResultPaging<String>, FirebaseError>> getUserFirebaseTokens(User user);
+
+  Future<FirebaseResult<dynamic, FirebaseError>> insertUserFirebaseToken(User user, String firebaseToken);
+
+  Future<FirebaseResult<dynamic, FirebaseError>> deleteUserFirebaseToken(User user, String firebaseToken);
+
+  Future<FirebaseResult<FirebaseResultPaging<User>, FirebaseError>> getAllUser(User currentUser, {User lastUser});
 
   Future<FirebaseResult<String, FirebaseError>> getOrCreateChatRoomId(List<User> users);
 
