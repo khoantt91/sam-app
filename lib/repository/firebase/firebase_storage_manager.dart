@@ -39,6 +39,11 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
       await firebaseTokenModel.setData({
         'isOnline': isOnline,
       }, merge: true);
+
+      final userStatus = await getUserStatus(user);
+      user.isOnline = userStatus.success;
+      await insertOrUpdateUser(user);
+
       return FirebaseResult(true, null);
     } on Exception catch (ex) {
       return FirebaseResult(null, FirebaseError(message: ex.toString()));
@@ -141,11 +146,6 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
           .map((documentSnapshot) => parseDataSnapshot<User>(documentSnapshot.data))
           .toList();
 
-      for (User user in userList) {
-        final result = await getUserStatus(user);
-        user.isOnline = result.success;
-      }
-
       return FirebaseResult(FirebaseResultPaging<User>(userList, totalDocuments, null), null);
     } on Exception catch (ex) {
       return FirebaseResult(null, FirebaseError(message: ex.toString()));
@@ -183,6 +183,25 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
     } on Exception catch (ex) {
       return FirebaseResult(null, FirebaseError(message: ex.toString()));
     }
+  }
+
+  @override
+  Stream<FirebaseResult<User, FirebaseError>> observerUserList() {
+    final userCollection = firebaseDb.collection(FirebaseStorageConstant.COLLECTION_USER);
+    return userCollection.snapshots(includeMetadataChanges: true).where((querySnapshot) {
+      if (querySnapshot.documentChanges.length != 1) return false;
+
+      final documentChanged = querySnapshot.documentChanges[0];
+      if (documentChanged.type == DocumentChangeType.modified) {
+        return true;
+      } else {
+        return false;
+      }
+    }).map((querySnapshot) {
+      Log.w('Changed=${querySnapshot.documentChanges[0].document.data}');
+      final userModified = parseDataSnapshot<User>(querySnapshot.documentChanges[0].document.data);
+      return FirebaseResult(userModified, null);
+    });
   }
 
   @override
@@ -247,6 +266,8 @@ abstract class FirebaseStorageManagerImp {
   Future<FirebaseResult<dynamic, FirebaseError>> insertOrUpdateUser(User user);
 
   Future<FirebaseResult<dynamic, FirebaseError>> updateUserStatus(User user, String firebaseToken, bool isOnline);
+
+  Stream<FirebaseResult<User, FirebaseError>> observerUserList();
 
   Future<FirebaseResult<bool, FirebaseError>> getUserStatus(User user);
 

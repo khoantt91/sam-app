@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:samapp/model/user.dart';
@@ -23,6 +25,12 @@ class _ChatTabScreenState extends BaseState<ChatTabScreen> {
   void initState() {
     super.initState();
     _getUserChatList();
+  }
+
+  @override
+  void dispose() {
+    stream?.cancel();
+    super.dispose();
   }
 
   @override
@@ -99,6 +107,21 @@ class _ChatTabScreenState extends BaseState<ChatTabScreen> {
       if (result.error != null) return Log.e('Error ${result.error.message}');
       setState(() {
         _userList = result.success.list;
+      });
+    });
+
+    _observerUserList(repository);
+  }
+
+  StreamSubscription stream;
+
+  void _observerUserList(RepositoryImp repository) {
+    stream = repository.observerUserList().listen((userResult) {
+      final index = _userList.indexWhere((user) => user.userId == userResult.success.userId);
+
+      if (index == -1) return;
+      setState(() {
+        _userList[index].isOnline = userResult.success.isOnline;
       });
     });
   }

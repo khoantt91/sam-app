@@ -185,6 +185,11 @@ class Repository implements RepositoryImp {
     final firebaseToken = await _getFirebaseToken();
     return _firebaseStorageManager.updateUserStatus(currentUser, firebaseToken, isOnline);
   }
+
+  @override
+  Stream<RepositoryResult<User, AppError>> observerUserList() {
+    return _firebaseStorageManager.observerUserList();
+  }
 }
 
 abstract class RepositoryImp {
@@ -205,6 +210,8 @@ abstract class RepositoryImp {
   Future<RepositoryResult<RepositoryResultPaging<User>, AppError>> getUserChatList(User user, {User lastUser});
 
   Future<RepositoryResult<RepositoryResultPaging<String>, AppError>> getUserFirebaseTokens(User user);
+
+  Stream<RepositoryResult<User, AppError>> observerUserList();
 
   //endregion
 
