@@ -120,9 +120,8 @@ class _ChatTabScreenState extends BaseState<ChatTabScreen> {
       final index = _userList.indexWhere((user) => user.userId == userResult.success.userId);
 
       if (index == -1) return;
-      setState(() {
-        _userList[index].isOnline = userResult.success.isOnline;
-      });
+      _userList[index].isOnline = userResult.success.isOnline;
+      setState(() {});
     });
   }
 }
