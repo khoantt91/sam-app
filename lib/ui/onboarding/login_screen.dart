@@ -31,12 +31,8 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(body: LayoutBuilder(builder: (context, viewConstraint) {
-      return MultiBlocProvider(
-        providers: [
-          BlocProvider<LoginBloc>(
-            create: (context) => LoginBloc(RepositoryProvider.of<RepositoryImp>(context)),
-          ),
-        ],
+      return BlocProvider<LoginBloc>(
+        create: (context) => LoginBloc(RepositoryProvider.of<RepositoryImp>(context)),
         child: Container(
           height: viewConstraint.maxHeight,
           color: Theme.of(context).accentColor,

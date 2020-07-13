@@ -7,6 +7,7 @@ import 'package:samapp/repository/firebase/firebase_storage_constant.dart';
 import 'package:samapp/repository/firebase/model/firebase_error.dart';
 import 'package:samapp/repository/firebase/model/firebase_result.dart';
 import 'package:samapp/repository/firebase/model/firebase_result_paging.dart';
+import 'package:samapp/utils/log/log.dart';
 
 class FirebaseStorageManager implements FirebaseStorageManagerImp {
   DocumentReference firebaseDb = Firestore.instance.collection(FirebaseStorageConstant.DATABASE_NAME).document(FirebaseStorageConstant.DATABASE_DEV);
@@ -145,6 +146,7 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
 
   @override
   Stream<FirebaseResult<Message, FirebaseError>> observerNewMessage(String chatRoomId) {
+    Log.w('Listen new message');
     final messageCollection =
         firebaseDb.collection(FirebaseStorageConstant.COLLECTION_MESSAGE).where(FirebaseStorageConstant.FIELD_CHAT_ROOM_ID, isEqualTo: chatRoomId);
     return messageCollection.snapshots().where((querySnapshot) {
@@ -158,6 +160,7 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
       }
     }).map((querySnapshot) {
       final message = parseDataSnapshot<Message>(querySnapshot.documentChanges[0].document.data);
+      Log.w('Listen new message = $message');
       return FirebaseResult(message, null);
     });
   }

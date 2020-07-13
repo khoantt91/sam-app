@@ -6,6 +6,7 @@ import 'package:samapp/repository/repository.dart';
 import 'package:samapp/ui/common/base_statefull_widget.dart';
 import 'package:samapp/ui/widget/common_app_password_text_field.dart';
 import 'package:samapp/utils/constant/dimen.dart';
+import 'package:samapp/utils/log/log.dart';
 
 class ChatTextFieldWidget extends BaseStateFulWidget {
   Function _sendMessage;

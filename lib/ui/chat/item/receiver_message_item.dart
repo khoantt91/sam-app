@@ -25,29 +25,45 @@ class ReceiverMessageItem extends BaseStateLessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Bubble(
-                          margin: BubbleEdges.only(top: 10),
-                          nip: BubbleNip.rightTop,
-                          color: Color(0xFF2998ff),
+                        Container(
+                          margin: EdgeInsets.only(right: Dimen.spacingSuperTiny),
+                          decoration: BoxDecoration(
+                            color: Color(0xFF2998FF),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(8),
+                              bottomLeft: Radius.circular(8),
+                              bottomRight: Radius.circular(8),
+                            ),
+                          ),
+                          padding: EdgeInsets.only(left: Dimen.spacingTiny, right: Dimen.spacingTiny, top: 4, bottom: 4),
                           child: Text(
                             _message.content.toString(),
-                            style: Theme.of(context).textTheme.bodyText2.copyWith(color: Colors.white),
+                            style: Theme.of(context).textTheme.bodyText2.copyWith(
+                                  fontSize: Dimen.fontNormal,
+                                  color: Colors.white,
+                                ),
                           ),
                         ),
+//                        Bubble(
+//                          margin: BubbleEdges.only(top: 10),
+//                          nip: BubbleNip.rightTop,
+//                          color: Color(0xFF2998ff),
+//                          child: Text(
+//                            _message.content.toString(),
+//                            style: Theme.of(context).textTheme.bodyText2.copyWith(color: Colors.white),
+//                          ),
+//                        ),
                       ],
                     )),
                 Container(
                     margin: EdgeInsets.only(top: Dimen.spacingSuperTiny, right: Dimen.spacingNormal),
-                    child: Opacity(
-                      opacity: 0.5,
-                      child: Text(
-                        '15:30 20/07/2020',
-                        textAlign: TextAlign.right,
-                        style: Theme.of(context).textTheme.bodyText2.copyWith(
-                              color: Theme.of(context).hintColor,
-                              fontSize: Dimen.fontTiny,
-                            ),
-                      ),
+                    child: Text(
+                      '15:30 20/07/2020',
+                      textAlign: TextAlign.right,
+                      style: Theme.of(context).textTheme.bodyText2.copyWith(
+                            color: Theme.of(context).hintColor,
+                            fontSize: Dimen.fontTiny,
+                          ),
                     )),
               ],
             ),
