@@ -89,11 +89,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
     messageList.replaceAll(allMessageResult.success.list);
     _totalItems = allMessageResult.success.totalItems;
+
     if (messageList.length > 0) {
       _lastMessage = messageList[messageList.length - 1];
     }
-    Log.i('Yield message chat list = ${messageList.length}');
-    yield ChatGetDataSuccess(_chatUser, List.from(messageList), messageList.length < _totalItems, _totalItems);
+    yield ChatGetDataSuccess(_chatUser, List.from(messageList), messageList.length >= _totalItems, _totalItems);
 
     /* Step 4: Register observer new message */
     if (_streamNewMessage == null) {
@@ -109,6 +109,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       return;
     }
 
+    Log.i('LOAD MORE !!!!');
+
     final allMessageResult = await _repository.getAllMessageInRoom(_chatRoomId, lastMessage: _lastMessage);
 
     if (allMessageResult.error != null) {
@@ -116,12 +118,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       return;
     }
 
+    Log.e('MESSAGE=${allMessageResult.success.list.length}');
     messageList.addAll(allMessageResult.success.list);
     _totalItems = allMessageResult.success.totalItems;
     if (messageList.length > 0) {
       _lastMessage = messageList[messageList.length - 1];
     }
-    yield ChatGetDataSuccess(_chatUser, messageList, messageList.length < _totalItems, _totalItems);
+    yield ChatGetDataSuccess(_chatUser, List.from(messageList), messageList.length >= _totalItems, _totalItems);
   }
 
   Stream<ChatState> _handleSendMessage(ChatSendMessage event) async* {
@@ -140,6 +143,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   Stream<ChatState> _handleNewMessageComing(ChatNewMessageComing event) async* {
+    Log.i('NEW MESSAGE = ${event.message} !!!!');
     messageList.insert(0, event.message);
     yield ChatGetDataSuccess(_chatUser, List.from(messageList), messageList.length < _totalItems, _totalItems);
   }

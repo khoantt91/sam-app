@@ -12,6 +12,7 @@ import 'package:samapp/repository/repository.dart';
 import 'package:samapp/ui/chat/item/receiver_message_item.dart';
 import 'package:samapp/ui/chat/item/sender_message_item.dart';
 import 'package:samapp/ui/common/base_statefull_widget.dart';
+import 'package:samapp/ui/widget/chat_listview_widget.dart';
 import 'package:samapp/ui/widget/chat_text_field_widget.dart';
 import 'package:samapp/ui/widget/common_app_bar.dart';
 import 'package:samapp/utils/constant/dimen.dart';
@@ -88,49 +89,11 @@ class _ChatScreenState extends BaseState<ChatScreen> {
           body: LayoutBuilder(builder: (ctx, constraint) {
             return Stack(
               children: [
-                Container(
-                    height: constraint.maxHeight - 56,
-                    child: BlocBuilder<ChatBloc, ChatState>(
-                      condition: (previousState, state) {
-                        if (state is ChatInitial || state is ChatGetDataInProgress || state is ChatGetDataSuccess) return true;
-                        return false;
-                      },
-                      builder: (ctx, state) {
-                        if (state is ChatGetDataInProgress || state is ChatInitial) return buildProgressLoading();
-                        if (state is ChatGetDataSuccess) return buildMessageList(state.messageList, state.chatUser);
-                        return SizedBox();
-                      },
-                    )),
+                Container(height: constraint.maxHeight - 56, child: ChatListViewWidget()),
                 Align(alignment: Alignment.bottomCenter, child: Container(height: 56, child: ChatTextFieldWidget(_messageController, _sendMessage))),
               ],
             );
           }),
-        ),
-      ),
-    );
-  }
-
-  ListView buildMessageList(List<Message> messageList, User chatUser) {
-    return ListView.builder(
-      reverse: true,
-      itemCount: messageList.length,
-      itemBuilder: (ctx, index) => messageList[index].sender == chatUser.userId.toString()
-          ? SenderMessageItem(messageList[index], chatUser.photo)
-          : ReceiverMessageItem(messageList[index]),
-    );
-  }
-
-  Center buildProgressLoading() {
-    return Center(
-      child: Container(
-        margin: EdgeInsets.all(Dimen.spacingSmall),
-        child: SizedBox(
-          width: 24,
-          height: 24,
-          child: CircularProgressIndicator(
-            strokeWidth: 1,
-            valueColor: new AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-          ),
         ),
       ),
     );
