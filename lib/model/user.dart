@@ -11,6 +11,8 @@ class User {
   String email;
   String photo;
 
+  bool isOnline;
+
   User({this.userId, this.password, this.token, this.email});
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

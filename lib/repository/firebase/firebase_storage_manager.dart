@@ -26,6 +26,42 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
   }
 
   @override
+  Future<FirebaseResult<dynamic, FirebaseError>> updateUserStatus(User user, String firebaseToken, bool isOnline) async {
+    try {
+      final firebaseTokenModel = firebaseDb
+          .collection(FirebaseStorageConstant.COLLECTION_USER)
+          .document(user.userId.toString())
+          .collection(FirebaseStorageConstant.FIELD_FIREBASE_TOKENS)
+          .document(firebaseToken);
+
+      final documentRef = await firebaseTokenModel.get();
+      if (documentRef != null && documentRef.data["isOnline"] == isOnline) return FirebaseResult(true, null);
+      await firebaseTokenModel.setData({
+        'isOnline': isOnline,
+      }, merge: true);
+      return FirebaseResult(true, null);
+    } on Exception catch (ex) {
+      return FirebaseResult(null, FirebaseError(message: ex.toString()));
+    }
+  }
+
+  @override
+  Future<FirebaseResult<bool, FirebaseError>> getUserStatus(User user) async {
+    try {
+      final firebaseTokenModel = firebaseDb
+          .collection(FirebaseStorageConstant.COLLECTION_USER)
+          .document(user.userId.toString())
+          .collection(FirebaseStorageConstant.FIELD_FIREBASE_TOKENS)
+          .where('isOnline', isEqualTo: true);
+
+      int totalDocuments = await _getTotalQuerySnapshot(firebaseTokenModel);
+      return totalDocuments == 0 ? FirebaseResult(false, null) : FirebaseResult(true, null);
+    } on Exception catch (ex) {
+      return FirebaseResult(null, FirebaseError(message: ex.toString()));
+    }
+  }
+
+  @override
   Future<FirebaseResult<FirebaseResultPaging<String>, FirebaseError>> getUserFirebaseTokens(User user) async {
     try {
       final userCollection = firebaseDb
@@ -104,6 +140,11 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
           .where((element) => element.documentID.toString() != currentUser.userId.toString())
           .map((documentSnapshot) => parseDataSnapshot<User>(documentSnapshot.data))
           .toList();
+
+      for (User user in userList) {
+        final result = await getUserStatus(user);
+        user.isOnline = result.success;
+      }
 
       return FirebaseResult(FirebaseResultPaging<User>(userList, totalDocuments, null), null);
     } on Exception catch (ex) {
@@ -204,6 +245,10 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
 
 abstract class FirebaseStorageManagerImp {
   Future<FirebaseResult<dynamic, FirebaseError>> insertOrUpdateUser(User user);
+
+  Future<FirebaseResult<dynamic, FirebaseError>> updateUserStatus(User user, String firebaseToken, bool isOnline);
+
+  Future<FirebaseResult<bool, FirebaseError>> getUserStatus(User user);
 
   Future<FirebaseResult<FirebaseResultPaging<String>, FirebaseError>> getUserFirebaseTokens(User user);
 

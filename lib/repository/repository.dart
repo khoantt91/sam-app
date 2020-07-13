@@ -23,6 +23,7 @@ class Repository implements RepositoryImp {
 
   String _token;
   String _fbToken;
+  User _currentUser;
 
   Future<String> _getToken() async {
     _token = _token == null ? await _secureStorageManager.read(SecureStorageConstant.ACCESS_TOKEN) : _token;
@@ -32,6 +33,14 @@ class Repository implements RepositoryImp {
   Future<String> _getFirebaseToken() async {
     _fbToken = _fbToken == null ? await _secureStorageManager.read(SecureStorageConstant.FIREBASE_TOKEN) : _fbToken;
     return Future.value(_fbToken);
+  }
+
+  Future<User> _getCurrentUser() async {
+    if (_currentUser == null) {
+      final result = await getCurrentUser();
+      _currentUser = result.success;
+    }
+    return Future.value(_currentUser);
   }
 
   Repository() {
@@ -55,10 +64,12 @@ class Repository implements RepositoryImp {
     * */
     if (result.success != null) {
       final token = result.success.token;
+      final firebaseToken = await firebaseMessaging.getToken();
       await _secureStorageManager.write(SecureStorageConstant.ACCESS_TOKEN, token);
+      await _secureStorageManager.write(SecureStorageConstant.FIREBASE_TOKEN, firebaseToken);
       await _commonStorageManager.storeCurrentUser(result.success);
       await _firebaseStorageManager.insertOrUpdateUser(result.success);
-      await _firebaseStorageManager.insertUserFirebaseToken(result.success, await firebaseMessaging.getToken());
+      await _firebaseStorageManager.insertUserFirebaseToken(result.success, firebaseToken);
       Log.i('\n- Store user & access token successfully\n- Store user info into FireStore successfully\n- UserId=${result.success.userId}');
     }
     return Future.value(result);
@@ -167,6 +178,13 @@ class Repository implements RepositoryImp {
   Future<RepositoryResult<RepositoryResultPaging<String>, AppError>> getUserFirebaseTokens(User user) async {
     return _firebaseStorageManager.getUserFirebaseTokens(user);
   }
+
+  @override
+  Future<RepositoryResult<dynamic, AppError>> updateCurrentUserStatus(bool isOnline) async {
+    final currentUser = await _getCurrentUser();
+    final firebaseToken = await _getFirebaseToken();
+    return _firebaseStorageManager.updateUserStatus(currentUser, firebaseToken, isOnline);
+  }
 }
 
 abstract class RepositoryImp {
@@ -181,6 +199,8 @@ abstract class RepositoryImp {
 
   //region User
   Future<RepositoryResult<User, AppError>> getCurrentUser();
+
+  Future<RepositoryResult<dynamic, AppError>> updateCurrentUserStatus(bool isOnline);
 
   Future<RepositoryResult<RepositoryResultPaging<User>, AppError>> getUserChatList(User user, {User lastUser});
 

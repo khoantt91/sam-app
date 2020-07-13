@@ -11,6 +11,7 @@ import 'package:samapp/ui/main/home_tab_screen.dart';
 import 'package:samapp/ui/main/listing_tab_screen.dart';
 import 'package:samapp/ui/main/notification_tab_screen.dart';
 import 'package:samapp/ui/widget/faded_index_stack.dart';
+import 'package:samapp/utils/log/log.dart';
 
 class MainTabScreen extends StatefulWidget {
   static const routerName = '/main-screen/';
@@ -19,7 +20,8 @@ class MainTabScreen extends StatefulWidget {
   _MainTabScreen createState() => _MainTabScreen();
 }
 
-class _MainTabScreen extends State<MainTabScreen> {
+class _MainTabScreen extends State<MainTabScreen> with WidgetsBindingObserver {
+  AppLifecycleState _notification;
   var _selectedIndexPage = 0;
   final List<Widget> _pages = [HomeTabScreen()];
 
@@ -62,6 +64,49 @@ class _MainTabScreen extends State<MainTabScreen> {
     setState(() {
       _selectedIndexPage = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _updateCurrentUserStatus(true);
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        {
+          _updateCurrentUserStatus(true);
+          break;
+        }
+
+      case AppLifecycleState.resumed:
+        {
+          break;
+        }
+      case AppLifecycleState.inactive:
+        {
+          break;
+        }
+      case AppLifecycleState.paused:
+        {
+          _updateCurrentUserStatus(false);
+          break;
+        }
+      case AppLifecycleState.detached:
+        {
+          _updateCurrentUserStatus(false);
+          break;
+        }
+    }
   }
 
   @override
@@ -123,5 +168,11 @@ class _MainTabScreen extends State<MainTabScreen> {
         ],
       ),
     );
+  }
+
+  void _updateCurrentUserStatus(bool isOnline) async {
+    /* Update current user status in FireStore is online */
+    final repository = RepositoryProvider.of<RepositoryImp>(context);
+    repository.updateCurrentUserStatus(isOnline);
   }
 }

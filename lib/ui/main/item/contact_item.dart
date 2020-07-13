@@ -19,7 +19,8 @@ class ContactItem extends BaseStateLessWidget {
               children: [
                 /* Avatar */
                 Container(
-                  margin: EdgeInsets.only(top: Dimen.spacingSuperTiny, left: Dimen.spacingNormal, right: Dimen.spacingSmall, bottom: Dimen.spacingSuperTiny),
+                  margin: EdgeInsets.only(
+                      top: Dimen.spacingSuperTiny, left: Dimen.spacingNormal, right: Dimen.spacingSmall, bottom: Dimen.spacingSuperTiny),
                   width: 44,
                   height: 44,
                   child: ClipOval(
@@ -47,14 +48,14 @@ class ContactItem extends BaseStateLessWidget {
                           Icon(
                             Icons.lens,
                             size: 6,
-                            color: Colors.green,
+                            color: _user.isOnline == true ? Colors.green : Colors.grey,
                           ),
                           Container(
                               color: Colors.red,
                               child: SizedBox(
                                 width: Dimen.spacingSuperTiny,
                               )),
-                          Text('online'),
+                          Text(_user.isOnline == true ? 'online' : 'offline'),
                         ],
                       )
                     ],
