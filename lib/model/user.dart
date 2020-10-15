@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:samapp/model/message.dart';
 
 part 'user.g.dart';
 
@@ -11,6 +12,8 @@ class User implements Equatable {
   String token;
   String email;
   String photo;
+
+  Message lastMessage;
 
   bool isOnline;
 

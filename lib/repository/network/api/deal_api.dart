@@ -24,11 +24,11 @@ class DealApi {
   }) async {
     try {
       final params = {
-        "fromDate": fromDate,
-        "listingTypes": listingTypes.map((e) => e.id).toList(),
-        "scorecardTypes": dealScorecardTypes.map((e) => e.stringId).toList(),
-        "toDate": toDate,
-        "statusDeals": dealStatus.map((e) => e.id).toList(),
+//        "fromDate": fromDate,
+//        "listingTypes": listingTypes.map((e) => e.id).toList(),
+//        "scorecardTypes": dealScorecardTypes.map((e) => e.stringId).toList(),
+//        "toDate": toDate,
+//        "statusDeals": dealStatus.map((e) => e.id).toList(),
         "textSearch": textSearch
       };
       var result = await _dio.post(

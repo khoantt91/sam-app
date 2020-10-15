@@ -142,7 +142,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   Stream<ChatState> _handleNewMessageComing(ChatNewMessageComing event) async* {
     Log.i('NEW MESSAGE = ${event.message.content} !!!!');
     messageList.insert(0, event.message);
-    yield ChatGetDataSuccess(_chatUser, List.from(messageList), messageList.length < _totalItems, _totalItems);
+    yield ChatGetDataSuccess(_chatUser, List.from(messageList), _totalItems == 0 || _totalItems <= 20 ? true : false, _totalItems);
   }
 
   @override

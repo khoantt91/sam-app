@@ -12,12 +12,13 @@ import 'package:samapp/utils/log/log.dart';
 class FirebaseStorageManager implements FirebaseStorageManagerImp {
   DocumentReference firebaseDb = Firestore.instance.collection(FirebaseStorageConstant.DATABASE_NAME).document(FirebaseStorageConstant.DATABASE_DEV);
 
+  //region User
   @override
   Future<FirebaseResult<dynamic, FirebaseError>> insertOrUpdateUser(User user) async {
     try {
       final userCollection = firebaseDb.collection(FirebaseStorageConstant.COLLECTION_USER);
       Map<String, dynamic> jsonUser = user.toJson();
-      jsonUser['updatedAt'] = DateTime.now().millisecondsSinceEpoch;
+      jsonUser[FirebaseStorageConstant.FIELD_UPDATED_AT] = DateTime.now().millisecondsSinceEpoch;
       await userCollection.document(user.userId.toString()).setData(jsonUser, merge: true);
       return FirebaseResult(true, null);
     } on Exception catch (ex) {
@@ -67,6 +68,84 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
   }
 
   @override
+  Future<FirebaseResult<FirebaseResultPaging<User>, FirebaseError>> getAllUser(User currentUser, {User lastUser}) async {
+    try {
+      CollectionReference collectionReference = firebaseDb.collection(FirebaseStorageConstant.COLLECTION_USER);
+
+      int totalDocuments = await _getTotalQuerySnapshot(collectionReference);
+
+      Query userCollection = collectionReference.orderBy(FirebaseStorageConstant.FIELD_USER_ID);
+      if (lastUser != null) {
+        userCollection = userCollection.startAfter([lastUser.userId]);
+      }
+      userCollection = userCollection.limit(FirebaseStorageConstant.LIMIT_QUERY);
+      final querySnapshot = await userCollection.getDocuments();
+      List<User> userList = querySnapshot.documents
+          .where((element) => element.documentID.toString() != currentUser.userId.toString())
+          .map((documentSnapshot) => parseDataSnapshot<User>(documentSnapshot.data))
+          .toList();
+
+      return FirebaseResult(FirebaseResultPaging<User>(userList, totalDocuments, null), null);
+    } on Exception catch (ex) {
+      return FirebaseResult(null, FirebaseError(message: ex.toString()));
+    }
+  }
+
+  @override
+  Future<FirebaseResult<FirebaseResultPaging<User>, FirebaseError>> getRecentlyUser(User currentUser, int limit, {User lastUser}) async {
+    try {
+      var query = firebaseDb
+          .collection(FirebaseStorageConstant.COLLECTION_CHAT_ROOM)
+          .where('users', arrayContainsAny: [currentUser.userId.toString()]).orderBy(FirebaseStorageConstant.FIELD_UPDATED_AT, descending: true);
+
+      int totalDocuments = await _getTotalQuerySnapshot(query);
+      query = query.limit(limit);
+
+      final roomSnapshots = await query.getDocuments();
+
+      final userList = List<User>();
+      for (DocumentSnapshot roomDocument in roomSnapshots.documents) {
+        for (String userId in roomDocument.data['users']) {
+          if (userId != currentUser.userId.toString()) {
+            final userDocument = await firebaseDb.collection(FirebaseStorageConstant.COLLECTION_USER).document(userId).get();
+            userList.add(parseDataSnapshot(userDocument.data));
+          }
+        }
+      }
+
+      if (lastUser != null) {
+        //TODO handle later
+      }
+//
+      return FirebaseResult(FirebaseResultPaging<User>(userList, totalDocuments, null), null);
+    } on Exception catch (ex) {
+      return FirebaseResult(null, FirebaseError(message: ex.toString()));
+    }
+  }
+
+  @override
+  Stream<FirebaseResult<User, FirebaseError>> observerUserList() {
+    final userCollection = firebaseDb.collection(FirebaseStorageConstant.COLLECTION_USER);
+    return userCollection.snapshots(includeMetadataChanges: true).where((querySnapshot) {
+      if (querySnapshot.documentChanges.length != 1) return false;
+
+      final documentChanged = querySnapshot.documentChanges[0];
+      if (documentChanged.type == DocumentChangeType.modified) {
+        return true;
+      } else {
+        return false;
+      }
+    }).map((querySnapshot) {
+      Log.w('Changed=${querySnapshot.documentChanges[0].document.data}');
+      final userModified = parseDataSnapshot<User>(querySnapshot.documentChanges[0].document.data);
+      return FirebaseResult(userModified, null);
+    });
+  }
+
+  //endregion
+
+  //region User Firebase Token
+  @override
   Future<FirebaseResult<FirebaseResultPaging<String>, FirebaseError>> getUserFirebaseTokens(User user) async {
     try {
       final userCollection = firebaseDb
@@ -107,11 +186,16 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
     }
   }
 
+  //endregion
+
+  //region Message Chat
   @override
   Future<FirebaseResult<FirebaseResultPaging<Message>, FirebaseError>> getAllMessageInRoom(String chatRoomId, {Message lastMessage}) async {
     try {
-      Query collectionReference =
-          firebaseDb.collection(FirebaseStorageConstant.COLLECTION_MESSAGE).where(FirebaseStorageConstant.FIELD_CHAT_ROOM_ID, isEqualTo: chatRoomId);
+      Query collectionReference = firebaseDb
+          .collection(FirebaseStorageConstant.COLLECTION_CHAT_ROOM)
+          .document(chatRoomId)
+          .collection(FirebaseStorageConstant.COLLECTION_MESSAGE);
       int totalDocuments = await _getTotalQuerySnapshot(collectionReference);
 
       Query messageCollection = collectionReference.orderBy(FirebaseStorageConstant.FIELD_CREATED_AT, descending: true);
@@ -129,41 +213,30 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
   }
 
   @override
-  Future<FirebaseResult<FirebaseResultPaging<User>, FirebaseError>> getAllUser(User currentUser, {User lastUser}) async {
-    try {
-      CollectionReference collectionReference = firebaseDb.collection(FirebaseStorageConstant.COLLECTION_USER);
-
-      int totalDocuments = await _getTotalQuerySnapshot(collectionReference);
-
-      Query userCollection = collectionReference.orderBy(FirebaseStorageConstant.FIELD_USER_ID);
-      if (lastUser != null) {
-        userCollection = userCollection.startAfter([lastUser.userId]);
-      }
-      userCollection = userCollection.limit(FirebaseStorageConstant.LIMIT_QUERY);
-      final querySnapshot = await userCollection.getDocuments();
-      List<User> userList = querySnapshot.documents
-          .where((element) => element.documentID.toString() != currentUser.userId.toString())
-          .map((documentSnapshot) => parseDataSnapshot<User>(documentSnapshot.data))
-          .toList();
-
-      return FirebaseResult(FirebaseResultPaging<User>(userList, totalDocuments, null), null);
-    } on Exception catch (ex) {
-      return FirebaseResult(null, FirebaseError(message: ex.toString()));
-    }
-  }
-
-  @override
   Future<FirebaseResult<String, FirebaseError>> getOrCreateChatRoomId(List<User> users) async {
     try {
       final chatRoomCollection = firebaseDb.collection(FirebaseStorageConstant.COLLECTION_CHAT_ROOM);
-      final query = chatRoomCollection.where(users[0].userId.toString(), isEqualTo: true).where(users[1].userId.toString(), isEqualTo: true);
+      final query =
+          chatRoomCollection.where('users', arrayContains: users[0].userId.toString()).where('users', arrayContainsAny: [users[1].userId.toString()]);
+
+      Log.i('USERIDS=${users[0].userId.toString()} - ${users[1].userId.toString()}');
+
       final snapshots = await query.getDocuments();
 
       if (snapshots.documents.length == 0) {
+        /* Create new Room */
         final document = chatRoomCollection.document();
-        await document.setData({users[0].userId.toString(): true, users[1].userId.toString(): true});
+        await document.setData({
+          'users': [users[0].userId.toString(), users[1].userId.toString()],
+          FirebaseStorageConstant.FIELD_UPDATED_AT: DateTime.now().millisecondsSinceEpoch,
+          FirebaseStorageConstant.FIELD_CREATED_AT: DateTime.now().millisecondsSinceEpoch,
+        });
         return FirebaseResult(document.documentID, null);
       } else {
+        /* Room existed => update & return */
+        chatRoomCollection
+            .document(snapshots.documents[0].documentID)
+            .setData({FirebaseStorageConstant.FIELD_UPDATED_AT: DateTime.now().millisecondsSinceEpoch}, merge: true);
         return FirebaseResult(snapshots.documents[0].documentID, null);
       }
     } on Exception catch (ex) {
@@ -179,29 +252,22 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
       final docRef = messageCollection.document();
       jsonMessage['messageId'] = docRef.documentID.toString();
       await docRef.setData(jsonMessage);
+
+      final chatRoomCollection = firebaseDb.collection(FirebaseStorageConstant.COLLECTION_CHAT_ROOM).document(message.chatRoomId);
+      await chatRoomCollection.setData({
+        'lastMessage': docRef.documentID.toString(),
+        FirebaseStorageConstant.FIELD_UPDATED_AT: DateTime.now().millisecondsSinceEpoch,
+      }, merge: true);
+
+      final messageInRoomCollection =
+          chatRoomCollection.collection(FirebaseStorageConstant.COLLECTION_MESSAGE).document(docRef.documentID.toString());
+
+      await messageInRoomCollection.setData(jsonMessage);
+
       return FirebaseResult(true, null);
     } on Exception catch (ex) {
       return FirebaseResult(null, FirebaseError(message: ex.toString()));
     }
-  }
-
-  @override
-  Stream<FirebaseResult<User, FirebaseError>> observerUserList() {
-    final userCollection = firebaseDb.collection(FirebaseStorageConstant.COLLECTION_USER);
-    return userCollection.snapshots(includeMetadataChanges: true).where((querySnapshot) {
-      if (querySnapshot.documentChanges.length != 1) return false;
-
-      final documentChanged = querySnapshot.documentChanges[0];
-      if (documentChanged.type == DocumentChangeType.modified) {
-        return true;
-      } else {
-        return false;
-      }
-    }).map((querySnapshot) {
-      Log.w('Changed=${querySnapshot.documentChanges[0].document.data}');
-      final userModified = parseDataSnapshot<User>(querySnapshot.documentChanges[0].document.data);
-      return FirebaseResult(userModified, null);
-    });
   }
 
   @override
@@ -222,6 +288,8 @@ class FirebaseStorageManager implements FirebaseStorageManagerImp {
       return FirebaseResult(message, null);
     });
   }
+
+  //endregion
 
   //region Private Support Methods
   S parseDataSnapshot<S>(Map<String, dynamic> json) {
@@ -278,6 +346,8 @@ abstract class FirebaseStorageManagerImp {
   Future<FirebaseResult<dynamic, FirebaseError>> deleteUserFirebaseToken(User user, String firebaseToken);
 
   Future<FirebaseResult<FirebaseResultPaging<User>, FirebaseError>> getAllUser(User currentUser, {User lastUser});
+
+  Future<FirebaseResult<FirebaseResultPaging<User>, FirebaseError>> getRecentlyUser(User currentUser, int limit, {User lastUser});
 
   Future<FirebaseResult<String, FirebaseError>> getOrCreateChatRoomId(List<User> users);
 

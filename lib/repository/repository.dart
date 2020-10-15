@@ -12,7 +12,7 @@ import 'package:samapp/repository/model/repository_result.dart';
 import 'package:samapp/repository/model/repository_result_paging.dart';
 import 'package:samapp/repository/network/network_api.dart';
 import 'package:samapp/utils/log/log.dart';
-import 'package:samapp/utils/utils.dart';
+
 import '../model/user.dart';
 
 class Repository implements RepositoryImp {
@@ -70,6 +70,7 @@ class Repository implements RepositoryImp {
       await _commonStorageManager.storeCurrentUser(result.success);
       await _firebaseStorageManager.insertOrUpdateUser(result.success);
       await _firebaseStorageManager.insertUserFirebaseToken(result.success, firebaseToken);
+
       Log.i('\n- Store user & access token successfully\n- Store user info into FireStore successfully\n- UserId=${result.success.userId}');
     }
     return Future.value(result);
@@ -155,6 +156,11 @@ class Repository implements RepositoryImp {
   }
 
   @override
+  Future<RepositoryResult<RepositoryResultPaging<User>, AppError>> getRecentlyUserChatList(User currentUser, int limit, {User lastUser}) async {
+    return _firebaseStorageManager.getRecentlyUser(currentUser, limit);
+  }
+
+  @override
   Future<RepositoryResult<String, AppError>> getOrCreateChatRoomId(List<User> users) async {
     return _firebaseStorageManager.getOrCreateChatRoomId(users);
   }
@@ -208,6 +214,8 @@ abstract class RepositoryImp {
   Future<RepositoryResult<dynamic, AppError>> updateCurrentUserStatus(bool isOnline);
 
   Future<RepositoryResult<RepositoryResultPaging<User>, AppError>> getUserChatList(User user, {User lastUser});
+
+  Future<RepositoryResult<RepositoryResultPaging<User>, AppError>> getRecentlyUserChatList(User currentUser, int limit, {User lastUser});
 
   Future<RepositoryResult<RepositoryResultPaging<String>, AppError>> getUserFirebaseTokens(User user);
 

@@ -1,18 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:samapp/bloc/event/login_event.dart';
 import 'package:samapp/bloc/event/tab_deal_event.dart';
-import 'package:samapp/bloc/state/login_state.dart';
 import 'package:samapp/bloc/state/tab_deal_state.dart';
 import 'package:samapp/model/constant.dart';
 import 'package:samapp/model/deal.dart';
 import 'package:samapp/model/pair.dart';
 import 'package:samapp/repository/repository.dart';
-import 'package:samapp/utils/log/log.dart';
-
-import 'state/login_state.dart';
 
 class TabDealBloc extends Bloc<TabDealEvent, TabDealState> {
   //region Variables

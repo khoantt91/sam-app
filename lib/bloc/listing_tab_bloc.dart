@@ -22,7 +22,7 @@ class ListingTabBloc extends Bloc<ListingTabEvent, ListingTabState> {
     ListingScorecardTypes.UNCLASSIFIED,
   ];
 
-  final Pair<DateTime, DateTime> _rangeData = Pair(DateTime.now().subtract(Duration(days: 30)), DateTime.now());
+  final Pair<DateTime, DateTime> _rangeData = Pair(DateTime.now().subtract(Duration(days: 365 * 2)), DateTime.now());
   String _keySearch = '';
 
   final List<Listing> _listings = [];
